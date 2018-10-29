@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 // Models
-import { helpers } from 'artoo';
+import { helpers, config } from 'artoo';
 import { User } from './models/user';
 
 // Add User to express request interface
@@ -20,7 +20,7 @@ export let auth = (request: Request, response: Response, next: NextFunction): vo
         //Extract token from header
         let token = (request.headers.authorization as string).substr(7, request.headers.authorization.length);
         //Decode token
-        let decoded = helpers.decodeJwt(token);
+        let decoded = helpers.decodeJwt(token, config.get('KEY'));
         //Check for user ID value in decoded token
         if(decoded.userId) {
             //Check for user in DB

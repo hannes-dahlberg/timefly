@@ -1,7 +1,6 @@
 // Libs
 import { Request, Response } from 'express';
-import { storage, helpers } from 'artoo';
-import * as dotenv from 'dotenv';
+import { storage, helpers, config } from 'artoo';
 
 // Controller
 import { Controller } from './controller';
@@ -9,10 +8,9 @@ import { Controller } from './controller';
 // Models
 import { User } from '../models/user';
 
-dotenv.load();
 /*Authentication controller. Takes care of authentication, registration
 activation and password resets*/
-export default class AuthController extends Controller {
+export class AuthController extends Controller {
     //Authentication controller
     public static auth(request: Request, response: Response): void {
         /*Check request body for email and password. Sends 500 error with
@@ -30,7 +28,7 @@ export default class AuthController extends Controller {
             if(helpers.hashCheck(request.body.password, user.password)) {
                 //Send respons with a new JWT token and the user data
                 response.json(helpers.toJson({
-                    token: helpers.signJwt({ userId: user.id }, { key: process.env.KEY }),
+                    token: helpers.signJwt({ userId: user.id }, { key: config.get('KEY') }),
                     user
                 }))
             } else { response.sendStatus(401); }
