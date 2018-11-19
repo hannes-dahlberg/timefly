@@ -22,7 +22,7 @@
     "vue-template-compiler": "^2.5.17"
   },
   "dependencies": {
-    "artoo": "file:../../../dwik/repos/artoo",
+    "artoo": "file:../artoo",
     "express": "^4.16.4",
     "vue": "^2.5.17",
     "vue-class-component": "^6.3.2",
