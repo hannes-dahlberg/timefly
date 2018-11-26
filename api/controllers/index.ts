@@ -1,5 +1,7 @@
 import * as authController from './auth_controller';
 
 export namespace Controllers {
-  export import AuthController = authController.AuthController;
+  export namespace Auth {
+    export import login = authController.login;
+  }
 }
