@@ -4,7 +4,7 @@
       <div class="card">
         <h5 class="card-header">Login</h5>
         <div class="card-body">
-          <form v-on:submit.prevent="login(form.email, form.password,)">
+          <form v-on:submit.prevent="submit(form.email, form.password)">
             <div class="form-group">
               <label for="loginEmail">Email address</label>
               <input
@@ -48,12 +48,14 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { State, Action, Getter } from "vuex-class";
 import Component from "vue-class-component";
-import Axios from "axios";
-import { AxiosResponse } from "axios";
+import { default as Axios, AxiosResponse } from "axios";
 
-//import { apiRoot } from "../router";
-export const apiRoot: string = "http://api.timefly.test:1234";
+export interface User {
+  emaiL: string;
+  id: number;
+}
 
 export type loginForm = {
   email: string;
@@ -61,21 +63,22 @@ export type loginForm = {
   remember: boolean;
 };
 
+const namespace = "AuthStore";
+
 @Component
 export default class LoginComponent extends Vue {
+  @Action("login", { namespace }) login: any;
+  @Getter("token", { namespace }) token: string;
+  @Getter("user", { namespace }) user: User;
+
   public form: loginForm = {
     email: "",
     password: "",
     remember: false
   };
 
-  public login(email: string, password: string) {
-    Axios.post(`${apiRoot}/auth/login`, {
-      email,
-      password
-    }).then((response: AxiosResponse) => {
-      console.log(response.data);
-    });
+  public submit(email: string, password: string) {
+    this.login({ email, password });
   }
 }
 </script>

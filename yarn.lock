@@ -1098,7 +1098,7 @@ arrify@^1.0.0:
     "@types/sqlite3" "^3.1.3"
     "@types/vue-router" "^2.0.0"
     "@types/yargs" "^11.1.1"
-    artoo "file:../../../../Library/Caches/Yarn/v3/npm-artoo-0.0.1-385a6afb-e775-4dd8-b90b-35f6cfba64cf-1543269098631/node_modules/artoo"
+    artoo "file:../../../../Library/Caches/Yarn/v3/npm-artoo-0.0.1-452e13c8-b453-464e-b47f-290e06115915-1543357148047/node_modules/artoo"
     axios "^0.18.0"
     bcrypt "^3.0.0"
     bluebird "^3.5.1"
@@ -6845,6 +6845,11 @@ vue@^2.5.17:
   version "2.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
   integrity sha512-mFbcWoDIJi0w0Za4emyLiW72Jae0yjANHbCVquMKijcavBGypqlF7zHRgMa5k4sesdv7hv2rB4JPdZfR+TPfhQ==
+
+vuex-class@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/vuex-class/-/vuex-class-0.3.1.tgz#3c0b946bcff4cf2be1904de5b0cab1a3dd5c41d5"
+  integrity sha512-d7Hc+ItQx6p9E/2mEWiyrvyEuo7Uj0mq4VNImd7dmxTelnkhOavKPMEG1Xdypug2RlPEYv0920IOa3hdVZ+4AA==
 
 vuex@^3.0.1:
   version "3.0.1"
