@@ -1,4 +1,4 @@
-import { Models, storageInstance, storage } from 'artoo';
+import { Models } from 'artoo';
 
 export class User extends Models.User {
   

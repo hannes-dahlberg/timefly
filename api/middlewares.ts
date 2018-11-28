@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 // Models
 import { Services } from 'artoo';
 import { User } from './models/user';
+import { reject } from 'bluebird';
 
 // Add User to express request interface
 declare global {
