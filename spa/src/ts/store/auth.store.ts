@@ -2,7 +2,10 @@ import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
 import { default as Axios, AxiosResponse } from "axios";
 
 import { AppState } from './app.store';
-import { apiPath } from '../router';
+import { errorPayload } from './error.store';
+
+export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}`;
+
 
 export interface AuthState {
   token: string | null;
@@ -14,7 +17,10 @@ export interface User {
   email: string
 }
 
-export const AuthStore: Module<AuthState, AppState> = {
+export type loginActionPayload = { email: string, password: string };
+export type loginActionCallback = (payload: loginActionPayload) => Promise<void>;
+
+export const authStore: Module<AuthState, AppState> = {
   namespaced: true,
   state: <AuthState>{
     token: null,
@@ -29,11 +35,11 @@ export const AuthStore: Module<AuthState, AppState> = {
     }
   },
   actions: <ActionTree<AuthState, AppState>>{
-    login: ({ commit }, payload: { email: string, password: string }) => {
+    login: ({ commit, dispatch }, payload: loginActionPayload) => {
       Axios.post(`${apiPath}/auth/login`, payload).then((response: AxiosResponse) => {
         commit('setToken', response.data.token);
         commit('setUser', response.data.user);
-      });
+      }).catch((error: any) => dispatch('error/submit', { message: 'Something went wrong', error }, { root: true }));
     }
   },
   getters: <GetterTree<AuthState, AppState>>{

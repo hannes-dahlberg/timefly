@@ -51,6 +51,7 @@ import Vue from "vue";
 import { State, Action, Getter } from "vuex-class";
 import Component from "vue-class-component";
 import { default as Axios, AxiosResponse } from "axios";
+import { loginActionCallback } from "../store/auth.store";
 
 export interface User {
   emaiL: string;
@@ -67,9 +68,9 @@ const namespace = "AuthStore";
 
 @Component
 export default class LoginComponent extends Vue {
-  @Action("login", { namespace }) login: any;
-  @Getter("token", { namespace }) token: string;
-  @Getter("user", { namespace }) user: User;
+  @Action("auth/login") login: loginActionCallback;
+  @Getter("auth/token") token: string;
+  @Getter("auth/user") user: User;
 
   public form: loginForm = {
     email: "",
@@ -78,7 +79,7 @@ export default class LoginComponent extends Vue {
   };
 
   public submit(email: string, password: string) {
-    this.login({ email, password });
+    this.login({ email, password }).then(() => {});
   }
 }
 </script>

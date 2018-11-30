@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { AuthStore } from './auth.store';
+import { authStore } from './auth.store';
+import { errorStore } from './error.store';
 
 const MODULES = {
-  AuthStore
+  'auth': authStore,
+  'error': errorStore
 };
 
 export interface AppState { }

@@ -6,7 +6,18 @@
 <script lang = "ts" >
 import Vue from "vue";
 import Component from "vue-class-component";
+import { State, Action, Getter } from "vuex-class";
+
+import { errorPayload, subscribeActionCallback } from "../store/error.store";
 
 @Component
-export default class IndexComponent extends Vue {}
+export default class IndexComponent extends Vue {
+  @Action("error/subscribe") errorSubscribe: subscribeActionCallback;
+
+  public mounted() {
+    this.errorSubscribe((payload: errorPayload) => {
+      console.log("SOMETHING WENT WRONG", payload);
+    });
+  }
+}
 </script>
