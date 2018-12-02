@@ -1,11 +1,10 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid mt-5">
     <router-view></router-view>
   </div>
 </template>
 <script lang = "ts" >
-import Vue from "vue";
-import Component from "vue-class-component";
+import { Vue, Component } from "vue-property-decorator";
 import { State, Action, Getter } from "vuex-class";
 
 import { errorPayload, subscribeActionCallback } from "../store/error.store";

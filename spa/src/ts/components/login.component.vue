@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-content-center mt-5">
+  <div class="row justify-content-center">
     <div class="col-lg-5">
       <div class="card">
         <h5 class="card-header">Login</h5>
@@ -47,9 +47,8 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import { Vue, Component } from "vue-property-decorator";
 import { State, Action, Getter } from "vuex-class";
-import Component from "vue-class-component";
 import { default as Axios, AxiosResponse } from "axios";
 import { loginActionCallback } from "../store/auth.store";
 
@@ -79,7 +78,9 @@ export default class LoginComponent extends Vue {
   };
 
   public submit(email: string, password: string) {
-    this.login({ email, password }).then(() => {});
+    this.login({ email, password }).then(() => {
+      this.$router.push("/timer");
+    });
   }
 }
 </script>
