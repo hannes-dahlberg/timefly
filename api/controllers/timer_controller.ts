@@ -1,9 +1,11 @@
 // Libs
 import { Request, Response } from 'express';
-import { Services, helpers } from 'artoo';
+import { Services, helpers, container, ORM } from 'artoo';
+import { User, Report } from '../models';
 
-export const index = (request: Request, response: Response): void => {
-  //if (request.body)
+
+export const index = (user: User) => (request: Request, response: Response): void => {
+  (<ORM.Relation<Report>>user.reports()).where('')
 }
 
 export const start = (request: Request, response: Response): void => {
