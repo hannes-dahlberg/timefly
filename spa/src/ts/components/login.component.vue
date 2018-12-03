@@ -48,6 +48,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import { Route } from "vue-router";
 import { State, Action, Getter } from "vuex-class";
 import { default as Axios, AxiosResponse } from "axios";
 import { loginActionCallback } from "../store/auth.store";

@@ -36,10 +36,13 @@ export const authStore: Module<AuthState, AppState> = {
   },
   actions: <ActionTree<AuthState, AppState>>{
     login: ({ commit, dispatch }, payload: loginActionPayload) => {
-      Axios.post(`${apiPath}/auth/login`, payload).then((response: AxiosResponse) => {
-        commit('setToken', response.data.token);
-        commit('setUser', response.data.user);
-      }).catch((error: any) => dispatch('error/submit', { message: 'Something went wrong', error }, { root: true }));
+      return new Promise((resolve, reject) => {
+        Axios.post(`${apiPath}/auth/login`, payload).then((response: AxiosResponse) => {
+          commit('setToken', response.data.token);
+          commit('setUser', response.data.user);
+          resolve();
+        }).catch((error: any) => dispatch('error/submit', { message: 'Something went wrong', error }, { root: true }));
+      });
     }
   },
   getters: <GetterTree<AuthState, AppState>>{
