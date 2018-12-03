@@ -9,8 +9,9 @@ export const apiPath: string = `http://${process.env.API_HOST}:${process.env.POR
 export default new VueRouter({
   mode: 'history',
   routes: [
-    { path: '/error/:code', component: ErrorComponent, beforeEnter: guard([middlewares.errorCode]) },
-    { path: '/login', component: LoginComponent, beforeEnter: guard([middlewares.guest]) },
-    { path: '/timer', component: TimerComponent, beforeEnter: guard([middlewares.auth]) }
+    { path: '/error/:code', name: 'error', component: ErrorComponent, beforeEnter: guard([middlewares.errorCode]) },
+    { path: '/login', name: 'login', component: LoginComponent, beforeEnter: guard([middlewares.guest]) },
+    { path: '/timer', name: 'timer', component: TimerComponent, beforeEnter: guard([middlewares.auth]) },
+    { path: '*', beforeEnter: guard([middlewares.invalidRoute]) }
   ]
 });

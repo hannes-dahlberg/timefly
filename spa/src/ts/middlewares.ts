@@ -6,11 +6,12 @@ export type navigationGuardNext = (to?: RawLocation | false | ((vm: Vue) => any)
 
 export default {
   //Redirect to 404 page if route is not defined
-  invalidRoute(to, from, next) {
+  invalidRoute: <NavigationGuard>(to, from, next) => {
+    console.log(to)
     if (to.name) {
       next();
     } else {
-      next({ name: 'error.404' });
+      next({ path: 'error/404' });
     }
   },
   //Middleware for authenticated users

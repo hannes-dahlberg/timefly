@@ -48,6 +48,9 @@ export const authStore: Module<AuthState, AppState> = {
     },
     user: (state): User => {
       return state.user;
+    },
+    isAuth: (state): boolean => {
+      return !!state.user;
     }
   }
 }
