@@ -1,5 +1,5 @@
-import { Models } from 'artoo';
+import { GroupModel as ArtooGroupModel } from 'artoo';
 
-export class Group extends Models.Group {
+export class GroupModel extends ArtooGroupModel {
 
 }

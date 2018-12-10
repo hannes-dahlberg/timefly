@@ -1,6 +1,6 @@
-import { Models, ORM } from 'artoo';
+import { ModelModule } from 'artoo';
 
-export class Project extends ORM.Model {
+export class ProjectModel extends ModelModule {
   public static table = 'projects';
 
   public timers() { return this.belongsToMany }

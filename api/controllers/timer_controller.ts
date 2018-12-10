@@ -1,17 +1,24 @@
 // Libs
-import { Request, Response } from 'express';
-import { Services, helpers, container, ORM } from 'artoo';
-import { User, Report } from '../models';
+import { Request, Response, RequestHandler } from "express";
+import * as moment from "moment";
+import { container, ConfigService, RelationModule } from "artoo";
+import { UserModel, ReportModel } from "../models";
 
+export class TimerController {
+  public index(user: UserModel): RequestHandler {
+    return (request: Request, response: Response): void => {
+      (<RelationModule<ReportModel>>user.reports()).where('')
+    };
+  }
+  public start(): RequestHandler {
+    return (request: Request, response: Response): void => {
 
-export const index = (user: User) => (request: Request, response: Response): void => {
-  (<ORM.Relation<Report>>user.reports()).where('')
-}
+    };
+  }
 
-export const start = (request: Request, response: Response): void => {
+  public stop(): RequestHandler {
+    return (request: Request, response: Response): void => {
 
-}
-
-export const stop = (request: Request, response: Response): void => {
-
+    };
+  }
 }

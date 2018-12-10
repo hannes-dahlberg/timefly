@@ -25,7 +25,7 @@ export namespace Validation {
 export type validationValue = { [key: string]: validationValue | string };
 export type validationInput = { [key: string]: validationInput | validation | validation[] };
 
-export const validate = (value: validationValue | string, validation: validationInput | validation | validation[]): boolean {
+export const validate = (value: validationValue | string, validation: validationInput | validation | validation[]): boolean => {
   if (typeof value !== 'string' && !(validation instanceof Array) && typeof validation !== 'function') {
     return Object.keys(value).findIndex((valueName: string) => {
       return !validate(value[valueName], validation[valueName]);

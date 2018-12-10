@@ -1,5 +1,5 @@
-import { Models, ORM } from 'artoo';
+import { ModelModule } from 'artoo';
 
-export class Client extends ORM.Model {
+export class Client extends ModelModule {
   public static table = 'clients';
 }

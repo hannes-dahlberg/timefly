@@ -1,7 +1,7 @@
-import { Models } from 'artoo';
+import { UserModel as ArtooUserModel } from 'artoo';
 
-import { Report } from './';
+import { ReportModel } from './';
 
-export class User extends Models.User {
-  public reports() { return this.hasMany(Report, 'user_id'); }
+export class UserModel extends ArtooUserModel {
+  public reports() { return this.hasMany(ReportModel, 'user_id'); }
 }
