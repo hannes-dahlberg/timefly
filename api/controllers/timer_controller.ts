@@ -2,7 +2,8 @@
 import { Request, Response, RequestHandler } from "express";
 import * as moment from "moment";
 import { container, ConfigService, RelationModule } from "artoo";
-import { UserModel, ReportModel } from "../models";
+import { UserModel } from "../models/user_model";
+import { ReportModel } from "../models/report_model";
 
 export class TimerController {
   public index(user: UserModel): RequestHandler {

@@ -3,7 +3,7 @@ import { Request, Response, RequestHandler } from "express";
 import { AuthService, container } from 'artoo';
 
 // Models
-import { UserModel } from '../models/user';
+import { UserModel } from '../models/user_model';
 container.getService(AuthService)
 export class AuthController {
   constructor(
