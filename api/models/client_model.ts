@@ -1,5 +1,5 @@
-import { ModelModule } from 'artoo';
+import { ModelModule } from "artoo";
 
-export class Client extends ModelModule {
-  public static table = 'clients';
+export class ClientModel extends ModelModule {
+  public static table = "clients";
 }

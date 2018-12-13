@@ -1,8 +1,11 @@
-import { storageInstance, Promise, PromiseResolve, PromiseReject } from 'artoo';
+import { container, StorageService } from "artoo";
+import * as Promise from "bluebird";
+
+const storageService: StorageService = container.getService(StorageService);
 
 export let up: () => Promise<void> = () => {
-    return new Promise<void>((resolve: PromiseResolve<void>, reject: PromiseReject) => {
-        storageInstance.execute(`
+    return new Promise<void>((resolve, reject) => {
+        storageService.execute(`
             CREATE TABLE [reports] (
                 [id] INTEGER PRIMARY KEY,
                 [user_id] INT,
@@ -41,11 +44,11 @@ export let up: () => Promise<void> = () => {
             );
         `).then(() => resolve()).catch((error: Error) => reject(error));
     });
-}
+};
 
 export let down: () => Promise<void> = () => {
-    return new Promise<void>((resolve: PromiseResolve<void>, reject: PromiseReject) => {
-        storageInstance.execute(`
+    return new Promise<void>((resolve, reject) => {
+        storageService.execute(`
         DROP TABLE IF EXISTS [reports];
         DROP TABLE IF EXISTS [projects];
         DROP TABLE IF EXISTS [tasks];
@@ -53,4 +56,4 @@ export let down: () => Promise<void> = () => {
         DROP TABLE IF EXISTS [customers];
         `).then(() => resolve()).catch((error: Error) => reject(error));
     });
-}
+};

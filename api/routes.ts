@@ -1,24 +1,36 @@
 // Libs
-import { Validation, container } from "artoo";
-import * as Express from "express";
+import { container, Validation } from "artoo";
+import { Request, RequestHandler, Response, Router } from "express";
 
 // Controllers
-import { AuthController, TimerController } from './controllers';
+import { AuthController, TimerController } from "./controllers";
 
-import { Middlewares } from './middlewares';
+import { Middlewares } from "./middlewares";
 const middlewares: Middlewares = container.getService(Middlewares);
 const authController: AuthController = container.getService(AuthController);
 const timerController: TimerController = container.getService(TimerController);
 
-let routes: Express.Router = Express.Router();
+const router: Router = Router();
 
-routes.post('/auth/login', middlewares.guest(), middlewares.validation({ email: Validation.email, password: Validation.required }), authController.login());
+/*const group = (router: Router, path: string, middlewares: RequestHandler, callback: (router: Router) => void) => {
+  router.use(path, middlewares);
+  callback(router);
+};*/
 
-routes.post('/timer/start', middlewares.auth(), timerController.start());
-routes.post('/timer/stop', middlewares.auth(), timerController.stop());
+router.post("/auth/login", middlewares.guest(), middlewares.validation({ email: Validation.email, password: Validation.required }), authController.login());
 
-routes.get('/test', (request: Express.Request, response: Express.Response) => {
-  response.json({ foo: 'Hello world' });
-})
+router.get("/timer", middlewares.auth(), timerController.index());
+router.post("/timer/start", middlewares.auth(), timerController.start());
+router.post("/timer/stop", middlewares.auth(), timerController.stop());
 
-export { routes };
+router.get("/test", (request: Request, response: Response) => {
+  response.json({ foo: "Hello world" });
+});
+
+/*group(router, "timer", middlewares.auth(), (router: Router) => {
+  router.get("", timerController.index());
+  router.post("start", timerController.start());
+  router.post("stop", timerController.stop());
+});*/
+
+export { router };

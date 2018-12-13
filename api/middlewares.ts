@@ -1,10 +1,12 @@
 // Libs
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-import { validationInput, validate } from './modules/validation';
+import { IValidationInput, validate } from './modules/validation';
+import { UserModel } from "./models/user_model";
 
 // Models
-import { AuthService, container, UserModel } from 'artoo';
+import { AuthService, container } from 'artoo';
+
 
 // Add User to express request interface
 declare global {
@@ -50,7 +52,7 @@ export class Middlewares {
         }
     }
 
-    public validation(validation: validationInput): RequestHandler {
+    public validation(validation: IValidationInput): RequestHandler {
         return (request: Request, response: Response, next: NextFunction): void => {
             //Check if request body is empty
             if (validate(request.body, validation)) {
