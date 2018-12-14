@@ -20,7 +20,6 @@ export default {
   }) as NavigationGuard,
   // Redirect to 404 page if route is not defined
   invalidRoute: <NavigationGuard>(to, from, next) => {
-    console.log(to);
     if (to.name) {
       next();
     } else {

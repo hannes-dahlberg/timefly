@@ -17,7 +17,7 @@ const router: Router = Router();
   callback(router);
 };*/
 
-router.post("/auth/login", middlewares.guest(), middlewares.validation({ email: Validation.email, password: Validation.required }), authController.login());
+router.post("/auth/login", middlewares.guest(), authController.login());
 
 router.get("/timer", middlewares.auth(), timerController.index());
 router.post("/timer/start", middlewares.auth(), timerController.start());

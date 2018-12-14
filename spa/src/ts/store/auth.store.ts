@@ -29,6 +29,11 @@ export const authStore: Module<IAuthState, IAppState> = {
         }).catch((error: any) => dispatch("error/submit", { message: "Something went wrong", error }, { root: true }));
       });
     },
+    setAxiosHeader: ({ getters }): void => {
+      if (getters.token) {
+        Axios.defaults.headers.Authorization = `Bearer: ${getters.token}`;
+      }
+    },
   } as ActionTree<IAuthState, IAppState>,
   getters: {
     isAuth: (state): boolean => {

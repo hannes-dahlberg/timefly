@@ -1,6 +1,6 @@
 import { AxiosResponse, default as Axios } from "axios";
+import moment from "moment";
 import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
-
 import { IAppState } from "./app.store";
 import { IErrorPayload } from "./error.store";
 
@@ -20,7 +20,7 @@ export const timerStore: Module<ITimerState, IAppState> = {
   actions: {
     index: ({ commit, dispatch }, date: Date): Promise<ITimer[]> => {
       return new Promise((resolve, reject) => {
-        Axios.get(`${apiPath}/timer`, { params: { date } }).then((response: AxiosResponse) => {
+        Axios.get(`${apiPath}/timer`, { params: { date: moment(date).format("YYYY-MM-DD") } }).then((response: AxiosResponse) => {
           resolve(response.data);
         });
       });

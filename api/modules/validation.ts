@@ -26,13 +26,11 @@ export interface IValidationValue { [key: string]: IValidationValue | string; }
 export interface IValidationInput { [key: string]: IValidationInput | validation | validation[]; }
 
 export const validate = (value: IValidationValue | string, validation: IValidationInput | validation | validation[]): boolean => {
-  console.log(value, validation);
   if (typeof value !== "string" && !(validation instanceof Array) && typeof validation !== "function") {
     return Object.keys(value).findIndex((valueName: string) => {
       return !validate(value[valueName], validation[valueName]);
     }) === -1 ? true : false;
   } else if (typeof value === "string" && validation instanceof Array) {
-    console.log("APA");
     return validation.findIndex((validation: validation) => !validate(value, validation)) === -1 ? true : false;
   } else if (typeof value === "string" && typeof validation === "function") {
     return validation(value);

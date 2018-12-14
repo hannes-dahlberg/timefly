@@ -12,7 +12,10 @@ import { errorPayload, subscribeActionCallback } from "../store/error.store";
 @Component
 export default class IndexComponent extends Vue {
   @Action("error/subscribe") errorSubscribe: subscribeActionCallback;
-
+  @Action("auth/setAxiosHeader") setAxiosHeader: () => any;
+  public created() {
+    this.setAxiosHeader();
+  }
   public mounted() {
     this.errorSubscribe((payload: errorPayload) => {
       console.log("SOMETHING WENT WRONG", payload);
