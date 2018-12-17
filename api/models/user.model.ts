@@ -1,6 +1,6 @@
 import { ModelModule, UserModel as ArtooUserModel } from "artoo";
 
-import { ReportModel } from "./report_model";
+import { ReportModel } from "./report.model";
 
 export class UserModel extends ArtooUserModel {
 

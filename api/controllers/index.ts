@@ -1,2 +1,2 @@
-export * from './auth_controller';
-export * from './timer_controller';
+export * from './auth.controller';
+export * from './timer.controller';

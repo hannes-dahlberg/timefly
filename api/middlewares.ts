@@ -1,7 +1,7 @@
 // Libs
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
-import { UserModel } from "./models/user_model";
+import { UserModel } from "./models/user.model";
 import { IValidationInput, validate } from "./modules/validation";
 
 // Models
@@ -16,7 +16,7 @@ declare global {
     }
 }
 
-export const middleware = (middlewares: RequestHandler | RequestHandler[]) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+export const middleware = (middlewares: RequestHandler | RequestHandler[]) => (target: any, propertyKey: string, descriptor: PropertyDescriptor): void => {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
         if (!(middlewares instanceof Array)) { middlewares = [middlewares]; }
@@ -24,11 +24,12 @@ export const middleware = (middlewares: RequestHandler | RequestHandler[]) => (t
     };
 };
 
+
 container.set<typeof UserModel>("model.user", UserModel);
 
 export class Middlewares {
     constructor(
-        private readonly authService: AuthService = container.getService(AuthService),
+        private readonly authService: AuthService = container.getService(AuthService, { args: [undefined, undefined, UserModel]}),
         private readonly userModel: typeof UserModel = container.get<typeof UserModel>("model.user", UserModel),
     ) { }
 

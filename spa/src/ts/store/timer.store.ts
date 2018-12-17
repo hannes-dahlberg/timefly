@@ -20,7 +20,7 @@ export const timerStore: Module<ITimerState, IAppState> = {
   actions: {
     index: ({ commit, dispatch }, date: Date): Promise<ITimer[]> => {
       return new Promise((resolve, reject) => {
-        Axios.get(`${apiPath}/timer`, { params: { date: moment(date).format("YYYY-MM-DD") } }).then((response: AxiosResponse) => {
+        Axios.get(`${apiPath}/timer`, { params: { start: '22,1345', date: moment(date).format("YYYY-MM-DD") } }).then((response: AxiosResponse) => {
           resolve(response.data);
         });
       });

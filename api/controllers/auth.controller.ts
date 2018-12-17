@@ -7,7 +7,7 @@ import { Validation } from "../modules/validation";
 const middlewares: Middlewares = container.getService(Middlewares);
 
 // Models
-import { UserModel } from "../models/user_model";
+import { UserModel } from "../models/user.model";
 container.getService(AuthService);
 
 export class AuthController {

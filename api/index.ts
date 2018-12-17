@@ -1,5 +1,5 @@
 import { ConfigService, container, IApp } from "artoo";
-import { UserModel } from "./models/user_model";
+import { UserModel } from "./models/user.model";
 import { router } from "./routes";
 container.set("model.user", UserModel);
 const configService: ConfigService = container.getService(ConfigService);

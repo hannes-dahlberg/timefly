@@ -1,6 +1,6 @@
 import { ModelModule } from "artoo";
-import { UserModel } from "./user_model";
-import { ProjectModel } from "./project_model";
+import { UserModel } from "./user.model";
+import { ProjectModel } from "./project.model";
 
 export class ReportModel extends ModelModule {
   public static table = 'reports';

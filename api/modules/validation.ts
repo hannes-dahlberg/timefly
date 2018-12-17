@@ -1,6 +1,8 @@
+import { container, HelperService } from "artoo";
 import * as moment from "moment";
 
 export type validation = (value: string) => boolean;
+const helperService: HelperService = container.getService(HelperService);
 
 export const Validation = {
   date: (format: string | null = null): validation => (value: string): boolean => {
@@ -20,6 +22,9 @@ export const Validation = {
   required: (value: string): boolean => {
     return value.length > 0;
   },
+  number: (value: string): boolean => {
+    return helperService.isDecimal(value);
+  }
 };
 
 export interface IValidationValue { [key: string]: IValidationValue | string; }
@@ -28,7 +33,7 @@ export interface IValidationInput { [key: string]: IValidationInput | validation
 export const validate = (value: IValidationValue | string, validation: IValidationInput | validation | validation[]): boolean => {
   if (typeof value !== "string" && !(validation instanceof Array) && typeof validation !== "function") {
     return Object.keys(value).findIndex((valueName: string) => {
-      return !validate(value[valueName], validation[valueName]);
+      return validation[valueName] !== undefined ? !validate(value[valueName], validation[valueName]) : false;
     }) === -1 ? true : false;
   } else if (typeof value === "string" && validation instanceof Array) {
     return validation.findIndex((validation: validation) => !validate(value, validation)) === -1 ? true : false;
