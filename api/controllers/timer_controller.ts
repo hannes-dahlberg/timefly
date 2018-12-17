@@ -1,7 +1,7 @@
 // Libs
 import { ConfigService, container, ParametersType, RelationModule } from "artoo";
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import * as moment from "moment";
+import * as moment from 'moment';
 import { ReportModel } from "../models/report_model";
 import { UserModel } from "../models/user_model";
 
@@ -15,8 +15,11 @@ export class TimerController {
   @middleware(middlewares.validation({ date: [Validation.required, Validation.date()] }))
   public index(): RequestHandler {
     return (request: Request, response: Response): void => {
-      response.sendStatus(200);
-      // (<RelationModule<ReportModel>>request.user.reports()).where('start', '>')
+      const start: Date = moment(`${request.query.date} 00:00:00`).toDate();
+      const end: Date = moment(`${request.query.date} 23:59:59`).toDate();
+      (<RelationModule<ReportModel>>request.user.reports()).where("start", ">=", start).where("start", "<=", end).get().then((reports: ReportModel[]) => {
+        response.json(reports);
+      });
     };
   }
   public start(): RequestHandler {

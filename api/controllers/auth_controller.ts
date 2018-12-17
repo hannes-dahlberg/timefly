@@ -1,7 +1,7 @@
 // Libs
 import { AuthService, container } from "artoo";
 import { Request, RequestHandler, Response } from "express";
-import { Middlewares } from "../middlewares";
+import { Middlewares, middleware } from "../middlewares";
 import { Validation } from "../modules/validation";
 
 const middlewares: Middlewares = container.getService(Middlewares);
@@ -15,6 +15,7 @@ export class AuthController {
     private readonly authService: AuthService = container.getService(AuthService),
   ) { }
 
+  @middleware(middlewares.validation({ email: [Validation.required, Validation.email], password: Validation.required }))
   public login(): RequestHandler {
     return (request: Request, response: Response): void => {
       this.authService.attempt(request.body.email, request.body.password).then((result: { user: UserModel, token: string }) => {

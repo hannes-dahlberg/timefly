@@ -18,19 +18,9 @@ declare global {
 
 export const middleware = (middlewares: RequestHandler | RequestHandler[]) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
-    descriptor.value = (...args: any[]) => {
-        return (request: Request, response: Response, next: NextFunction): void => {
-            if (!(middlewares instanceof Array)) { middlewares = [middlewares]; }
-
-            const itterateMiddlewares: (request: Request, response: Response, middlewares: RequestHandler[]) => void = (request: Request, response: Response, middlewares: RequestHandler[]): void => {
-                if (middlewares.length > 1) {
-                    middlewares[0](request, response, () => itterateMiddlewares(request, response, middlewares.slice(1, middlewares.length));
-                } else {
-                    middlewares[0](request, response, () => originalMethod(...args)(request, response, [next()]));
-                }
-            };
-            itterateMiddlewares(request, response, middlewares);
-        };
+    descriptor.value = function (...args: any[]) {
+        if (!(middlewares instanceof Array)) { middlewares = [middlewares]; }
+        return [...middlewares, originalMethod.apply(this, ...args)];
     };
 };
 
@@ -47,7 +37,7 @@ export class Middlewares {
             // Check for authorization header
             if (request.headers.authorization) {
                 // Extract token from header
-                const token = (request.headers.authorization as string).substr(7, request.headers.authorization.length);
+                const token = (request.headers.authorization as string).substr(8, request.headers.authorization.length);
                 // Decode token
                 this.authService.check(token).then((user: UserModel) => {
                     request.user = user;
@@ -74,10 +64,10 @@ export class Middlewares {
             // Check if request body is empty
             try {
                 validate(request.method === "GET" ? request.query : request.body, validation);
+                next();
             } catch (error) {
                 response.status(400).json({ error: "Validation failed" });
             }
-            next();
         };
     }
 }

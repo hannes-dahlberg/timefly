@@ -1,9 +1,11 @@
-import { UserModel as ArtooUserModel } from "artoo";
+import { ModelModule, UserModel as ArtooUserModel } from "artoo";
 
 import { ReportModel } from "./report_model";
 
 export class UserModel extends ArtooUserModel {
 
-  public static find() { console.log("FINT"); }
+  public static find<T extends ModelModule>(id: number): Promise<T> {
+    return this.where<T>("id", id.toString()).first();
+  }
   public reports() { return this.hasMany(ReportModel, "user_id"); }
 }

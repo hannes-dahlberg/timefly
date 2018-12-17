@@ -25,6 +25,7 @@ export const authStore: Module<IAuthState, IAppState> = {
         Axios.post(`${apiPath}/auth/login`, payload).then((response: AxiosResponse) => {
           commit("setToken", response.data.token);
           commit("setUser", response.data.user);
+          dispatch("setAxiosHeader", response.data.token);
           resolve();
         }).catch((error: any) => dispatch("error/submit", { message: "Something went wrong", error }, { root: true }));
       });

@@ -12,7 +12,6 @@
     "artoo": "node node_modules/artoo/bin/artoo"
   },
   "dependencies": {
-    "artoo": "file:../artoo",
     "express": "^4.16.4",
     "moment": "^2.22.2",
     "vue-hot-reload-api": "^2.3.1"
