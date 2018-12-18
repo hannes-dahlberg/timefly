@@ -7,10 +7,10 @@ import { UserModel } from "../models/user.model";
 import { DateTimeModel } from "../models/date-time.model";
 
 import { middleware, Middlewares } from "../middlewares";
-import { formWorker, workForm } from "../modules/formWorker";
+import { formWorker, workForm } from "../modules/form-worker";
 import { Validation } from "../modules/validation";
 
-const middlewares: Middlewares = container.getService(Middlewares, { useName: 'service.middlewares'});
+const middlewares: Middlewares = container.getService(Middlewares, { useName: 'service.middlewares' });
 
 export class TimerController {
   public constructor(
@@ -24,18 +24,18 @@ export class TimerController {
       const start: Date = moment(`${request.query.date} 00:00:00`).toDate();
       const end: Date = moment(`${request.query.date} 23:59:59`).toDate();
       (<RelationModule<ReportModel>>request.user.reports())
-      .where({ column: "start", operator: ">=", value: (new this.dateTimeModel(start)).toDateString() })
-      .where({ column: "start", operator: "<=", value: (new this.dateTimeModel(end)).toDateString() })
-      .get().then((reports: ReportModel[]) => {
-        response.json(reports);
-      });
+        .where({ column: "start", operator: ">=", value: (new this.dateTimeModel(start)).toDateString() })
+        .where({ column: "start", operator: "<=", value: (new this.dateTimeModel(end)).toDateString() })
+        .get().then((reports: ReportModel[]) => {
+          response.json(reports);
+        });
     };
   }
 
   @middleware(middlewares.validation({ projectId: Validation.required, start: [Validation.required, Validation.date()] }))
   public start(): RequestHandler {
     return (request: Request, response: Response): void => {
-      
+
     };
   }
 
