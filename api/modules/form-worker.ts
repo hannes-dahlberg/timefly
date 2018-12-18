@@ -5,22 +5,37 @@ const helperService: HelperService = container.getService(HelperService, { useNa
 
 export type formWorker = (value: string) => any;
 
-export const formWorker = {
-  decimal: (decimals: number = 2, symbol: string | RegExp = '.'): formWorker => (value: string): number => {
+export const FormWorker = {
+  parseNumber: (decimals: number = 2, symbol: string | RegExp = '.'): formWorker => (value: string): number | null => {
     if (!(symbol instanceof RegExp)) {
-      symbol = new RegExp(symbol, 'ig');
+      symbol = new RegExp(`\\${symbol}`, 'ig');
     }
-    const pow = Math.pow(10, decimals);
-    let returnValue: number = parseFloat(value.replace(symbol, "."));
-    return Math.round(returnValue * pow) / pow;
+
+    let returnValue: number = parseFloat(value.toString().replace(symbol, "."));
+    // Check for NaN
+    if (returnValue === returnValue) {
+      const pow = Math.pow(10, decimals);
+      return Math.round(returnValue * pow) / pow;
+    }
+
+    return null;
+  },
+  parseInteger: (value: string): number | null => {
+    let returnValue: number = parseInt(value);
+    return returnValue === returnValue ? returnValue : null;
+  },
+  parseDate: (value: string): Date | null => {
+    let returnValue = new Date(value);
+    return returnValue.toString() !== "Invalid Date" ? returnValue : null;
+  },
+  parseModel: <T, C extends new (...args: any[]) => T>(model: C): formWorker => (value: string): T => {
+    return new (model)(value);
   }
 }
 
 export interface IFormWorkerInput { [key: string]: IFormWorkerInput | formWorker | formWorker[] }
 
-
 export const workForm = (formWorker: IFormWorkerInput) => (target: any, propertyKey: string, descriptor: PropertyDescriptor): void => {
-  console.log(formWorker.start)
   const originalMethod = descriptor.value;
   descriptor.value = function (...args: any[]) {
     return [(request: Request, response: Response, next: NextFunction): void => {
@@ -33,7 +48,6 @@ export const workForm = (formWorker: IFormWorkerInput) => (target: any, property
           } else {
             if (!(tempFormWorker instanceof Array)) { tempFormWorker = [tempFormWorker]; }
             tempFormWorker.forEach((formWorker: formWorker) => {
-              console.log(formWorker.name, 'aa');
               helperService.dotAnnotaion(request, (request.method === 'GET' ? 'query' : 'body') + "." + key, formWorker);
             });
           }
