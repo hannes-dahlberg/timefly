@@ -2,9 +2,9 @@ import { DateTimeModel } from "../models";
 
 export class AddTimerDTO {
   public constructor(
-    public project_id: number,
-    public start: DateTimeModel,
-    public end: DateTimeModel,
+    public projectId: number,
+    public start: string,
+    public end: string,
     public comment: string,
   ) { }
 }

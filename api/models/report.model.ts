@@ -10,6 +10,7 @@ export class ReportModel extends ModelModule {
   public id: number;
   public user_id: number;
   public project_id: number;
+  public get projectId(): number { return this.project_id; }
   public start: Date;
   public end: Date;
   public comment: string;

@@ -1,0 +1,17 @@
+
+.square-size {
+  position: relative;
+  width: 100%;
+  &:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+  &__content {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+}

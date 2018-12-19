@@ -7,7 +7,7 @@ import { IErrorPayload } from "./error.store";
 export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}`;
 
 export interface ITimerState {
-  token: string | null;
+
 }
 
 export interface ITimer {

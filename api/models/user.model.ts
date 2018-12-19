@@ -8,4 +8,5 @@ export class UserModel extends ArtooUserModel {
     return this.where<T>("id", id.toString()).first();
   }
   public reports() { return this.hasMany(ReportModel, "user_id"); }
+  public projects() { return this.hasMany() }
 }

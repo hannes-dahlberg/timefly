@@ -11,6 +11,7 @@ import { Validation } from "../modules/validation";
 import { TimerDTO } from "../dto/timer.dto";
 import { StartTimerDTO } from "../dto/start-timer.dto";
 import { FormWorker, workForm } from "../modules/form-worker";
+import { EndTimerDTO } from "../dto";
 
 const middlewares: Middlewares = container.getService(Middlewares, { useName: 'service.middlewares' });
 export class TimerController {
@@ -30,8 +31,8 @@ export class TimerController {
           response.json(reports.map((report: ReportModel) => new TimerDTO(
             report.id,
             report.project_id,
-            (new DateTimeModel(report.start)),
-            (new DateTimeModel(report.end)),
+            (new DateTimeModel(report.start)).toString(),
+            (new DateTimeModel(report.end)).toString(),
             report.comment
           )));
         });
@@ -42,15 +43,32 @@ export class TimerController {
   @workForm({ projectId: FormWorker.parseInteger, start: FormWorker.parseModel<DateTimeModel, typeof DateTimeModel>(DateTimeModel) })
   public start(): RequestHandler {
     return (request: Request, response: Response): void => {
-      let postDate: StartTimerDTO = request.body;
-      ReportModel.create<ReportModel>(postDate.start).then((reports: ReportModel) => response.send());
+      // NNED TO VALIDATE THE CURRENT USER IS OWNER OF PROJECT
+      let startTimer: StartTimerDTO = new StartTimerDTO(
+        request.body.start,
+        request.body.projectId,
+        request.body.start
+      );
+
+      ReportModel.create<ReportModel>(startTimer).then((report: ReportModel) => response.send(
+        new TimerDTO(
+          report.id,
+          report.projectId,
+          (new DateTimeModel(report.start)).toString(),
+          (new DateTimeModel(report.end)).toString(),
+          report.comment
+        )
+      ));
     };
   }
 
-  @middleware(middlewares.validation({ projectId: Validation.required, start: [Validation.required, Validation.date()], comment: Validation.max(99999) }))
+  @middleware(middlewares.validation({ timerId: Validation.required, stop: [Validation.required, Validation.date()], comment: Validation.max(99999) }))
   public stop(): RequestHandler {
     return (request: Request, response: Response): void => {
-
+      let endTimer: EndTimerDTO = new EndTimerDTO(
+        request.body.number,
+        request.body.end
+      )
     };
   }
 }

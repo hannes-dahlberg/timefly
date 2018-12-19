@@ -4,8 +4,8 @@ export class TimerDTO {
   public constructor(
     public id: number,
     public projectId: number,
-    public start: DateTimeModel,
-    public end: DateTimeModel,
+    public start: string,
+    public end: string,
     public comment: string,
   ) { }
 }

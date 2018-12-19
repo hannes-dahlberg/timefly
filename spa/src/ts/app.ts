@@ -1,8 +1,14 @@
+import $ from "jquery";
+import popper from "popper.js";
+import * as bootstrap from "bootstrap";
+window.$ = $
+window.popper = popper
+window.bootstrap = bootstrap
+
+
 // VueJS
 import Vue from 'vue'
 import VueRouter from 'vue-router';
-
-
 
 // Index component
 import { IndexComponent } from './components/';
