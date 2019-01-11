@@ -63,8 +63,6 @@ export type loginForm = {
   remember: boolean;
 };
 
-const namespace = "AuthStore";
-
 @Component
 export default class LoginComponent extends Vue {
   @Action("auth/login") login: loginActionCallback;

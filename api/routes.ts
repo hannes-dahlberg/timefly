@@ -3,12 +3,15 @@ import { container, Validation } from "artoo";
 import { Request, RequestHandler, Response, Router } from "express";
 
 // Controllers
-import { AuthController, TimerController } from "./controllers";
+import { AuthController, ReportController, TimerController } from "./controllers";
 
 import { Middlewares } from "./middlewares";
+import { ClientController } from "./controllers/client.controller";
 const middlewares: Middlewares = container.getService(Middlewares);
 const authController: AuthController = container.getService(AuthController);
 const timerController: TimerController = container.getService(TimerController);
+const reportController: ReportController = container.getService(ReportController);
+const clientController: ClientController = container.getService(ClientController);
 
 const router: Router = Router();
 
@@ -19,9 +22,10 @@ const router: Router = Router();
 
 router.post("/auth/login", middlewares.guest(), authController.login());
 
-router.get("/timer", middlewares.auth(), timerController.index());
+router.get("/report", middlewares.auth(), reportController.index());
 router.post("/timer/start", middlewares.auth(), timerController.start());
-router.post("/timer/stop", middlewares.auth(), timerController.stop());
+router.put("/timer/stop", middlewares.auth(), timerController.stop());
+router.get("/client", middlewares.auth(), clientController.index());
 
 router.get("/test", (request: Request, response: Response) => {
   response.json({ foo: "Hello world" });

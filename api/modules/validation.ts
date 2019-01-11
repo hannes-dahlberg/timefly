@@ -1,45 +1,107 @@
 import { container, HelperService } from "artoo";
 import * as moment from "moment";
+import { Request, Response } from "express";
 
-export type validation = (value: string) => boolean;
+export type validation = (value: string | number | boolean, request: Request, response: Response) => boolean | Promise<boolean>;
 const helperService: HelperService = container.getService(HelperService);
 
 export const Validation = {
   date: (format: string | null = null): validation => (value: string): boolean => {
-    return moment(value, format).isValid();
+    return moment(value, format !== null ? format : undefined).isValid();
   },
   email: (value: string): boolean => {
     return (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(value);
   },
-  max: (max: number): validation => (value: string): boolean => {
-    if (Number(value)) { return Number(value) <= max; }
+  max: (max: number): validation => (value: string | number): boolean => {
+    if (typeof value === "number" || Number(value)) { return Number(value) <= max; }
     return value.length <= max;
   },
-  min: (min: number): validation => (value: string): boolean => {
-    if (Number(value)) { return Number(value) >= min; }
+  min: (min: number): validation => (value: string | number): boolean => {
+    if (typeof value === "number" || Number(value)) { return Number(value) >= min; }
     return value.length >= min;
   },
-  required: (value: string): boolean => {
-    return value.length > 0;
+  required: (value: string | number | boolean): boolean => {
+    if (typeof value === "string" && value.length < 0) { return false; }
+    else if (value === undefined) { return false; }
+
+    return true;
   },
-  number: (value: string): boolean => {
-    return helperService.isDecimal(value);
+  number: (value: string | number): boolean => {
+    return typeof value === "number" || helperService.isDecimal(value);
   }
 };
 
-export interface IValidationValue { [key: string]: IValidationValue | string; }
+export interface IValidationValue { [key: string]: IValidationValue | string | number | boolean; }
 export interface IValidationInput { [key: string]: IValidationInput | validation | validation[]; }
 
-export const validate = (value: IValidationValue | string, validation: IValidationInput | validation | validation[]): boolean => {
-  if (typeof value !== "string" && !(validation instanceof Array) && typeof validation !== "function") {
-    return Object.keys(value).findIndex((valueName: string) => {
-      return validation[valueName] !== undefined ? !validate(value[valueName], validation[valueName]) : false;
-    }) === -1 ? true : false;
-  } else if (typeof value === "string" && validation instanceof Array) {
-    return validation.findIndex((validation: validation) => !validate(value, validation)) === -1 ? true : false;
-  } else if (typeof value === "string" && typeof validation === "function") {
-    return validation(value);
+export class ValidationError {
+  public validationName: string | null;
+  public propertyName: string | null;
+  public value: string | number | boolean | null;
+  constructor({ validationName = null, propertyName = null, value = null }: {
+    validationName?: string | null,
+    propertyName?: string | null,
+    value?: string | number | boolean | null
+  }) {
+    this.validationName = validationName;
+    this.propertyName = propertyName;
+    this.value = value;
+  }
+}
+
+export const validate = (value: IValidationValue | string | number | boolean, validation: IValidationInput | validation | validation[], request: Request, response: Response): Promise<boolean | ValidationError> => {
+  const isSimple = (value: IValidationValue | string | number | boolean) => {
+    return ["string", "number", "boolean"].indexOf(typeof value) != -1 ? true : false;
   }
 
-  throw new Error("Validation failed. Input missmatched");
+  return new Promise((resolve, reject) => {
+    if (!isSimple(value) && !(validation instanceof Array) && typeof validation !== "function") {
+      Promise.all(Object.keys(value).map((valueName: string) => validation[valueName] !== undefined ? new Promise((resolve, reject) => validate((value as IValidationValue)[valueName], validation[valueName], request, response).then((result: boolean | ValidationError) => {
+        if (typeof result !== 'boolean') {
+          result.propertyName = valueName;
+          resolve(result);
+        } else if (!result) {
+          resolve(new ValidationError({ propertyName: valueName }));
+        } else {
+          resolve(result);
+        }
+      }).catch((error: any) => reject(error))) : new Promise((resolve) => resolve())
+      )).then((results: Array<boolean | ValidationError>) => {
+        const validationError = results.find((result: boolean | ValidationError) => typeof result !== 'boolean');
+        resolve(validationError !== undefined ? validationError : true);
+      }).catch((error: any) => reject(error));
+    } else if (isSimple(value) && validation instanceof Array) {
+      Promise.all(validation.map((validation: validation) => new Promise((resolve, reject) => validate(value, validation, request, response).then((result: boolean | ValidationError) => {
+        if (typeof result !== 'boolean') {
+          result.validationName = validation.name;
+          result.value = value as string | number | boolean;
+          resolve(result);
+        } else if (!result) {
+          resolve(new ValidationError({ validationName: validation.name, value: value as string | number | boolean }));
+        } else {
+          resolve(result);
+        }
+      }).catch((error: any) => reject(error)))
+      )).then((results: Array<boolean | ValidationError>) => {
+        const validationError = results.find((result: boolean | ValidationError) => typeof result !== 'boolean');
+        resolve(validationError !== undefined ? validationError : true);
+      }).catch((error: any) => reject(error));
+    } else if (isSimple(value) && typeof validation === "function") {
+      let validationResult = validation(value as string | number | boolean, request, response);
+
+      let callback = (result: boolean | ValidationError) => resolve(result);
+
+      if (validationResult instanceof Promise) {
+        validationResult.then((result: boolean | ValidationError) => {
+          callback(result);
+        }).catch((error: any) => reject(error));
+      } else {
+        callback(validationResult);
+      }
+    } else {
+      reject(new Error("Validation failed"));
+    }
+
+  });
+
 };

@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
+          <h5 class="modal-title">{{ title }}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -19,8 +19,14 @@
   </div>
 </template>
 <script lang="ts">
+import $ from "jquery";
+import bootstrap from "bootstrap";
 import { Vue, Component } from "vue-property-decorator";
-@Component
+@Component({
+  props: {
+    title: String
+  }
+})
 export default class ModalComponent extends Vue {
   public mounted() {
     this.$on("show", () => {
@@ -29,7 +35,6 @@ export default class ModalComponent extends Vue {
     this.$on("hide", () => {
       $(this.$refs.modal).modal("hide");
     });
-    //
   }
 }
 </script>

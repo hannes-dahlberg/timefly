@@ -1,6 +1,6 @@
 import { container, HelperService } from 'artoo';
+import moment = require('moment');
 
-import * as moment from 'moment';
 export class DateTimeModel {
   private _moment: moment.Moment;
   constructor(date: Date)
@@ -15,6 +15,8 @@ export class DateTimeModel {
       this._moment = moment(`${year}${month}${day}${hour}${minute}${second}`, 'YYYYMDHms')
     }
   }
+
+  public get isValid(): boolean { return this._moment.isValid(); }
 
   public get year(): number { return this._moment.year(); }
   public set year(value: number) { this._moment.year(value); }
@@ -38,6 +40,19 @@ export class DateTimeModel {
     return this._moment.toDate();
   }
 
+  public toMoment(): moment.Moment {
+    return this._moment;
+  }
+
+  public format(format: string): string {
+    return this._moment.format(format);
+  }
+
+  public parse(date: string, format?: string): DateTimeModel {
+    this._moment = moment(date, format);
+    return this;
+  }
+
   public toDateString(): string {
     return this._moment.format('YYYY-MM-DD');
   }
@@ -48,5 +63,10 @@ export class DateTimeModel {
 
   public toString(): string {
     return `${this.toDateString()} ${this.toTimeString()}`;
+  }
+
+  public static create(value: string | DateTimeModel): DateTimeModel {
+    if (typeof value === "string") { return new DateTimeModel(value); }
+    return value;
   }
 }

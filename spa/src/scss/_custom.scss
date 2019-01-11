@@ -15,3 +15,48 @@
     bottom: 0px;
   }
 }
+
+.btn .fas {
+  line-height: inherit !important;
+}
+
+.hidden_submit {
+  margin: 0px;
+  padding: 0px;
+  width: 0px;
+  height: 0px;
+  border: 0px;
+
+  position: absolute;
+}
+
+.timer {
+  &--active {
+    background-color: rgba(theme-color('primary'), .1);
+  }
+}
+
+.pulse {
+  background-color: rgba(184,218,255,0);
+  animation-name: pulseColor;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulseColor {
+  0% {
+    background-color: rgba(184,218,255,0);
+  }
+  25% {
+    background-color: rgba(184,218,255,0);
+  }
+  50% {
+    background-color: rgba(184,218,255,1);
+  }
+  75% {
+    background-color: rgba(184,218,255,0);
+  }
+  100% {
+    background-color: rgba(184,218,255,0);
+  }
+}

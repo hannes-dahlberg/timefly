@@ -1,5 +1,6 @@
 import { AxiosResponse, default as Axios } from "axios";
 import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
+import { broadcast } from "../utils/broadcast";
 
 import { IAppState } from "./app.store";
 
@@ -7,7 +8,7 @@ export const apiPath: string = `http://${process.env.API_HOST}:${process.env.POR
 
 export interface IAuthState {
   token: string | null;
-  user: IUSer;
+  user: IUSer | null;
 }
 
 export interface IUSer {
@@ -25,16 +26,37 @@ export const authStore: Module<IAuthState, IAppState> = {
         Axios.post(`${apiPath}/auth/login`, payload).then((response: AxiosResponse) => {
           commit("setToken", response.data.token);
           commit("setUser", response.data.user);
-          dispatch("setAxiosHeader", response.data.token);
+          dispatch("setAxiosHeaders", response.data.token);
           resolve();
         }).catch((error: any) => dispatch("error/submit", { message: "Something went wrong", error }, { root: true }));
       });
     },
-    setAxiosHeader: ({ getters }): void => {
+    logout: ({ commit, dispatch }): void => {
+      commit("removeToken");
+      commit("removeUser");
+      dispatch("removeAxiosHeaders");
+      broadcast.emit("logout");
+    },
+    setAxiosHeaders: ({ getters }): void => {
       if (getters.token) {
         Axios.defaults.headers.Authorization = `Bearer: ${getters.token}`;
       }
     },
+    removeAxiosHeaders: (): void => {
+      delete Axios.defaults.headers.Authorization;
+    },
+    setAxiosInterceptors: ({ dispatch }): void => {
+      Axios.interceptors.response.use((response) => {
+        return response
+      },
+        (error) => {
+          // Unauthorized
+          if (error.response.status == 401) {
+            dispatch("logout");
+          }
+          return Promise.reject(error);
+        });
+    }
   } as ActionTree<IAuthState, IAppState>,
   getters: {
     isAuth: (state): boolean => {
@@ -51,9 +73,15 @@ export const authStore: Module<IAuthState, IAppState> = {
     setToken: (state, payload: string) => {
       state.token = payload;
     },
+    removeToken: (state) => {
+      state.token = null;
+    },
     setUser: (state, payload: IUSer) => {
       state.user = payload;
     },
+    removeUser: (state) => {
+      state.user = null;
+    }
   } as MutationTree<IAuthState>,
   namespaced: true,
   state: {

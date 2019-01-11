@@ -2,7 +2,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
 import { UserModel } from "./models/user.model";
-import { IValidationInput, validate } from "./modules/validation";
+import { IValidationInput, validate, ValidationError } from "./modules/validation";
 
 // Models
 import { AuthService, container } from "artoo";
@@ -29,7 +29,7 @@ container.set<typeof UserModel>("model.user", UserModel);
 
 export class Middlewares {
     constructor(
-        private readonly authService: AuthService = container.getService(AuthService, { args: [undefined, undefined, UserModel]}),
+        private readonly authService: AuthService = container.getService(AuthService, { args: [undefined, undefined, UserModel] }),
         private readonly userModel: typeof UserModel = container.get<typeof UserModel>("model.user", UserModel),
     ) { }
 
@@ -62,13 +62,16 @@ export class Middlewares {
 
     public validation(validation: IValidationInput): RequestHandler {
         return (request: Request, response: Response, next: NextFunction): void => {
-            // Check if request body is empty
-            try {
-                validate(request.method === "GET" ? request.query : request.body, validation);
-                next();
-            } catch (error) {
-                response.status(400).json({ error: "Validation failed" });
-            }
+            let data = request.method === "GET" ? request.query : request.body;
+            validate(data, validation, request, response)
+                .then((result: boolean | ValidationError) => {
+                    if (typeof result === 'boolean') {
+                        if (result) { next(); }
+                        else { response.status(400).json({ message: "Validation failed" }); }
+                    } else {
+                        response.status(400).json({ validationError: result });
+                    }
+                }).catch((error: any) => response.sendStatus(500));
         };
     }
 }

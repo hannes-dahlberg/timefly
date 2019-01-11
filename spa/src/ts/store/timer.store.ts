@@ -1,32 +1,26 @@
-import { AxiosResponse, default as Axios } from "axios";
-import moment from "moment";
-import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
+import { default as Axios } from "axios";
+import { ActionTree, Module } from "vuex";
 import { IAppState } from "./app.store";
-import { IErrorPayload } from "./error.store";
+import { IStartTimerJSON, IEndTimerJSON } from "../../../../shared/dto";
 
-export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}`;
+export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}/timer`;
 
+export type timerStartAction = (startTimer: IStartTimerJSON) => Promise<void>;
+export type timerEndAction = (startTimer: IEndTimerJSON) => Promise<void>;
 export interface ITimerState {
 
 }
 
-export interface ITimer {
-  id: number;
-}
-
-export type indexActionCallback = (date: Date) => Promise<ITimer[]>;
-
 export const timerStore: Module<ITimerState, IAppState> = {
-  actions: {
-    index: ({ commit, dispatch }, date: Date): Promise<ITimer[]> => {
-      return new Promise((resolve, reject) => {
-        Axios.get(`${apiPath}/timer`, { params: { start: '22,1345', date: moment(date).format("YYYY-MM-DD") } }).then((response: AxiosResponse) => {
-          resolve(response.data);
-        });
-      });
-    },
-  } as ActionTree<ITimerState, IAppState>,
   namespaced: true,
+  actions: {
+    start: ({ dispatch }, startTimer: IStartTimerJSON): Promise<void> => new Promise((resolve, reject) => {
+      Axios.post(`${apiPath}/start`, startTimer).then(() => resolve()).catch((error: any) => dispatch("error/submit", { code: 500, message: "Error while starting timer", error }));
+    }),
+    stop: ({ dispatch }, endTimer: IEndTimerJSON): Promise<void> => new Promise((resolve, reject) => {
+      Axios.put(`${apiPath}/${endTimer.id}/stop`, endTimer).then(() => resolve()).catch((error: any) => dispatch("error/submit", { code: 500, message: "Error while stopping timer", error }));
+    })
+  } as ActionTree<ITimerState, IAppState>,
   state: {
     token: null,
     user: null,

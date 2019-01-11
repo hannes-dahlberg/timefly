@@ -1,9 +1,9 @@
 import $ from "jquery";
 import popper from "popper.js";
 import * as bootstrap from "bootstrap";
-window.$ = $
-window.popper = popper
-window.bootstrap = bootstrap
+(window as any).$ = $;
+(window as any).popper = popper;
+(window as any).bootstrap = bootstrap;
 
 
 // VueJS
