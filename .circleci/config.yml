@@ -6,6 +6,9 @@ jobs:
     working_directory: ~/timefly
     steps:
       - checkout
+      - run:
+          name: clear yarn cache
+          command: yarn cache clean
       - restore_cache:
           key: cache-{{ checksum "yarn.lock" }}
       - run:
