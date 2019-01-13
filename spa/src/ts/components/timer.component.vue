@@ -97,12 +97,14 @@ import { AddTimerComponent } from "./";
 import { ReportDTO } from "../../../../shared/dto";
 import { ReportViewModel, ViewModel } from "../view-models";
 import { DateTimeModel } from "../../../../shared/models";
+import { timerEndAction } from "../store/timer.store";
 
 @Component({
   components: { AddTimerComponent }
 })
 export default class TimerComponent extends Vue {
-  @Action("report/index") index: reportIndexAction;
+  @Action("report/index") reportIndex: reportIndexAction;
+  @Action("timer/stop") timerStop: timerEndAction;
   @Watch("dateRouteQuery")
   onDateRouteQueryChange(value: string | null) {
     this.setDateFromRouteQuery();
@@ -144,7 +146,7 @@ export default class TimerComponent extends Vue {
   }
 
   public getReports() {
-    this.index(this.date.toDate()).then((reports: ReportDTO[]) => {
+    this.reportIndex(this.date.toDate()).then((reports: ReportDTO[]) => {
       this.reports = reports.map((report: ReportDTO) =>
         ReportViewModel.fromReportDTO(report)
       );
@@ -197,6 +199,8 @@ export default class TimerComponent extends Vue {
     (this.$refs.startTimer as Vue).$emit("show");
   }
 
-  public stop() {}
+  public stop(report: ReportViewModel) {
+    this.timerStop();
+  }
 }
 </script>

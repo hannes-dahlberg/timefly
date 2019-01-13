@@ -6,7 +6,7 @@ import { IStartTimerJSON, IEndTimerJSON } from "../../../../shared/dto";
 export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}/timer`;
 
 export type timerStartAction = (startTimer: IStartTimerJSON) => Promise<void>;
-export type timerEndAction = (startTimer: IEndTimerJSON) => Promise<void>;
+export type timerEndAction = (endTimer: IEndTimerJSON) => Promise<void>;
 export interface ITimerState {
 
 }

@@ -10,7 +10,7 @@ export interface IReportState {
 
 }
 
-export type reportIndexAction = (date: Date) => Promise<ReportDTO[]>;
+export type reportIndexAction = (date: Date) => Promise<IReportJSON[]>;
 export type reportCreateAction = (createReport: CreateReportDTO) => Promise<void>;
 
 export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}/report`;
