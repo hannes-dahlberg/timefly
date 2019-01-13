@@ -3,25 +3,38 @@ jobs:
   build:
     docker:
       - image: circleci/node:11.4.0
+    working_directory: ~/timefly
     steps:
       - checkout
       - restore-cache:
-        key: cache-{{ checksum "yarn.lock" }}
+          key: cache-{{ checksum "yarn.lock" }}
       - run:
-        name: install
-        command: yarn
+          name: install
+          command: yarn
       - save-cache:
-        key: cache-{{ checksum "yarn.lock" }}
-        paths:
-          - ./node_modules
+          key: cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
       - run:
-        name: build
-        command: yarn build
+          name: build
+          command: yarn build
   deploy:
     machine:
       enable: true
+    working_directory: ~/timefly
     steps:
       - run:
-        name: Deploy over SSH
-        command: |
-          scp -r . deploy@dwik.se:/var/www/applications/timefly
+          name: Deploy over SSH
+          command: |
+            scp -r ~/timefly deploy@dwik.se:/var/www/applications/timefly
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+        requires:
+          - build
+        filters:
+          branches:
+            only: master
