@@ -6,11 +6,11 @@ jobs:
     working_directory: ~/timefly
     steps:
       - checkout
+      - restore_cache:
+          key: cache-{{ checksum "yarn.lock" }}
       - run:
           name: clear yarn cache
           command: yarn cache clean
-      - restore_cache:
-          key: cache-{{ checksum "yarn.lock" }}
       - run:
           name: install
           command: yarn install --frozen-lockfile
