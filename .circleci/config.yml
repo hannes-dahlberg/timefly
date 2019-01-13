@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: clear
+          command: rm -rf /usr/local /home/ubuntu
+      - run:
           name: clear yarn cache
           command: yarn cache clean
       - restore_cache:
