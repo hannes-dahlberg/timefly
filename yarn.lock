@@ -994,7 +994,7 @@ arrify@^1.0.0:
 
 "artoo@https://github.com/hannes-dahlberg/artoo.git":
   version "0.0.1"
-  resolved "https://github.com/hannes-dahlberg/artoo.git#a78d772446412ceb300a94ac0613131c237194c9"
+  resolved "https://github.com/hannes-dahlberg/artoo.git#b6c8ee7cfdbb373df60cbee2b6c2512093390c4f"
   dependencies:
     "@types/bcrypt" "^3.0.0"
     "@types/bluebird" "^3.5.24"
