@@ -17,6 +17,7 @@
     "artoo": "node node_modules/artoo/bin/artoo"
   },
   "dependencies": {
+    "artoo": "https://github.com/hannes-dahlberg/artoo.git",
     "express": "^4.16.4",
     "moment": "^2.23.0",
     "vue-hot-reload-api": "^2.3.1"
