@@ -20,7 +20,7 @@ jobs:
           command: yarn build
   deploy:
     machine:
-      enable: true
+      enabled: true
     working_directory: ~/timefly
     steps:
       - run:
