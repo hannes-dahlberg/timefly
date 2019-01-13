@@ -6,12 +6,12 @@ jobs:
     working_directory: ~/timefly
     steps:
       - checkout
-      - restore-cache:
+      - restore_cache:
           key: cache-{{ checksum "yarn.lock" }}
       - run:
           name: install
           command: yarn
-      - save-cache:
+      - save_cache:
           key: cache-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
