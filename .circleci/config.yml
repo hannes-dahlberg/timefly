@@ -1,9 +1,27 @@
 version: 2.1
-
-orbs:
-    hello: circleci/hello-build@0.0.7 # uses the circleci/buildpack-deps Docker image
-
-workflows:
-    "Hello Workflow":
-        jobs:
-          - hello/hello-build
+jobs:
+  build:
+    docker:
+      - image: circleci/node:11.4.0
+    steps:
+      - checkout
+      - restore-cache:
+        key: cache-{{ checksum "yarn.lock" }}
+      - run:
+        name: install
+        command: yarn
+      - save-cache:
+        key: cache-{{ checksum "yarn.lock" }}
+        paths:
+          - ./node_modules
+      - run:
+        name: build
+        command: yarn build
+  deploy:
+    machine:
+      enable: true
+    steps:
+      - run:
+        name: Deploy over SSH
+        command: |
+          scp -r . deploy@dwik.se:/var/www/applications/timefly
