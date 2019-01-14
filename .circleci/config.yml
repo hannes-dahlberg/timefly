@@ -9,11 +9,8 @@ jobs:
       - restore_cache:
           key: cache-{{ checksum "yarn.lock" }}
       - run:
-          name: clear yarn cache
-          command: yarn cache clean
-      - run:
           name: install
-          command: yarn --frozen-lockfile
+          command: yarn
       - save_cache:
           key: cache-{{ checksum "yarn.lock" }}
           paths:
@@ -26,6 +23,9 @@ jobs:
       enabled: true
     working_directory: ~/timefly
     steps:
+      - add_ssh_key:
+          fingerprints:
+            - 49:07:e3:ef:41:45:f2:c6:96:47:88:9f:c0:56:03:5d
       - run:
           name: Deploy over SSH
           command: |
