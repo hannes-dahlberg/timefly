@@ -19,7 +19,7 @@ jobs:
           name: build
           command: yarn build
       - persist_to_workspace:
-          root: /tmp/dir
+          root: /home/circleci
           paths:
             - build
   deploy:
