@@ -1,4 +1,4 @@
-import { ConfigService, container, IApp } from "artoo";
+import { ConfigService, container, IApp } from "artos";
 import { UserModel } from "./models/user.model";
 import { router } from "./routes";
 container.set("model.user", UserModel);

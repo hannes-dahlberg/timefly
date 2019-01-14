@@ -47,16 +47,16 @@ export const authStore: Module<IAuthState, IAppState> = {
     },
     setAxiosInterceptors: ({ dispatch }): void => {
       Axios.interceptors.response.use((response) => {
-        return response
+        return response;
       },
         (error) => {
           // Unauthorized
-          if (error.response.status == 401) {
+          if (error.response.status === 401) {
             dispatch("logout");
           }
           return Promise.reject(error);
         });
-    }
+    },
   } as ActionTree<IAuthState, IAppState>,
   getters: {
     isAuth: (state): boolean => {
@@ -81,7 +81,7 @@ export const authStore: Module<IAuthState, IAppState> = {
     },
     removeUser: (state) => {
       state.user = null;
-    }
+    },
   } as MutationTree<IAuthState>,
   namespaced: true,
   state: {

@@ -162,7 +162,10 @@ export default class AddTimerComponent extends Vue {
 
   public clients: ClientViewModel[] = [];
   public get tasks(): TaskViewModel[] {
-    if (this.selectedProject !== null) {
+    if (
+      this.selectedProject !== null &&
+      this.selectedProject.tasks !== undefined
+    ) {
       return this.selectedProject.tasks;
     }
     return [];
@@ -186,8 +189,16 @@ export default class AddTimerComponent extends Vue {
         );
 
         // Setting selected project and task to first found
-        this.selectedProject = this.clients[0].projects[0];
-        this.selectedTask = this.selectedProject.tasks[0];
+        if (this.clients[0].projects !== undefined) {
+          const projects = this.clients[0].projects;
+          if (projects !== undefined) {
+            this.selectedProject = projects[0];
+            const tasks = projects[0].tasks;
+            if(tasks !== undefined) {
+              this.selectedTask = tasks[0];
+            }
+          }
+        }
       });
       (this.$refs.modal as Vue).$emit("show");
     });
@@ -213,8 +224,8 @@ export default class AddTimerComponent extends Vue {
 
     if (this.to !== "") {
       this.reportAdd(
-        new CreateReportDTO({
-          taskId: this.selectedTask.id,
+        CreateReportDTO.parse({
+          taskId: (this.selectedTask as TaskViewModel).id,
           start: this.from,
           end: this.to,
           comment: this.comment
@@ -224,8 +235,8 @@ export default class AddTimerComponent extends Vue {
         .catch(() => (this.loading = false));
     } else {
       this.timerStart(
-        new StartTimerDTO({
-          taskId: this.selectedTask.id,
+        StartTimerDTO.parse({
+          taskId: (this.selectedTask as TaskViewModel).id,
           start:
             this.from !== ""
               ? this.from

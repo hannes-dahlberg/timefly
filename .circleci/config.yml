@@ -13,7 +13,7 @@ jobs:
           command: yarn cache clean
       - run:
           name: install
-          command: yarn install --frozen-lockfile
+          command: yarn --frozen-lockfile
       - save_cache:
           key: cache-{{ checksum "yarn.lock" }}
           paths:

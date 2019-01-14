@@ -1,16 +1,16 @@
 import { AxiosResponse, default as Axios } from "axios";
+import moment from "moment";
 import { ActionTree, Module } from "vuex";
-import moment from 'moment';
 
 import { IAppState } from "./app.store";
 
-import { ReportDTO, CreateReportDTO, IReportJSON, ICreateReportJSON } from "../../../../shared/dto";
+import { CreateReportDTO, ICreateReportJSON, IReportJSON, ReportDTO } from "../../../../shared/dto";
 
 export interface IReportState {
-
+  foo: string;
 }
 
-export type reportIndexAction = (date: Date) => Promise<IReportJSON[]>;
+export type reportIndexAction = (date: Date) => Promise<ReportDTO[]>;
 export type reportCreateAction = (createReport: CreateReportDTO) => Promise<void>;
 
 export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}/report`;
@@ -29,7 +29,6 @@ export const reportStore: Module<IReportState, IAppState> = {
       return new Promise((resolve, reject) => {
         Axios.post(apiPath, payload).then(() => resolve()).catch((error: any) => reject(error));
       });
-    }
-  } as ActionTree<IReportState, IAppState>
-}
-
+    },
+  } as ActionTree<IReportState, IAppState>,
+};

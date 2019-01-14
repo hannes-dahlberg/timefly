@@ -10,6 +10,13 @@ export interface IEndTimerDTO extends IEndTimer<DateTimeModel> { }
 export interface IEndTimerJSON extends IEndTimer<string> { }
 
 export class EndTimerDTO extends DTO<IEndTimerDTO> implements IEndTimerDTO {
+
+  public static parse(object: IEndTimerJSON): EndTimerDTO {
+    return new EndTimerDTO({
+      id: object.id,
+      end: new DateTimeModel(object.end),
+    });
+  }
   public id: number;
   public end: DateTimeModel;
 
@@ -17,14 +24,7 @@ export class EndTimerDTO extends DTO<IEndTimerDTO> implements IEndTimerDTO {
     return {
       id: this.id,
       end: this.end.toString(),
-    }
-  }
-
-  public static parse(object: IEndTimerJSON): EndTimerDTO {
-    return new EndTimerDTO({
-      id: object.id,
-      end: new DateTimeModel(object.end),
-    });
+    };
   }
 
 }

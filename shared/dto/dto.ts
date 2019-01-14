@@ -1,8 +1,8 @@
 export interface IJSON {
-  [key: string]: string | number | Boolean | null | IJSON | IJSON[]
+  [key: string]: string | number | boolean | null | IJSON | IJSON[];
 }
 export interface IDTO {
-  [key: string]: any
+  [key: string]: any;
 }
 export class DTO<T extends { [key: string]: any }> {
   public constructor(properties: T) {

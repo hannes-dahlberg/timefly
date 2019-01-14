@@ -1,8 +1,7 @@
-import { DTO } from "./dto";
-import { UserDTO, IUserDTO, IUserJSON } from "./user.dto";
-import { TaskDTO, ITaskDTO, ITaskJSON } from "./task.dto";
 import { DateTimeModel } from "../models";
-import { userInfo } from "os";
+import { DTO } from "./dto";
+import { ITaskDTO, ITaskJSON, TaskDTO } from "./task.dto";
+import { IUserDTO, IUserJSON, UserDTO } from "./user.dto";
 
 export interface IReport<A, B, C, D> {
   id: number;
@@ -16,6 +15,17 @@ export interface IReportDTO extends IReport<IUserDTO, ITaskDTO, DateTimeModel, D
 export interface IReportJSON extends IReport<IUserJSON, ITaskJSON, string, string> { }
 
 export class ReportDTO extends DTO<IReportDTO> implements IReportDTO {
+
+  public static parse(object: IReportJSON): ReportDTO {
+    return new ReportDTO({
+      id: object.id,
+      ...(object.user ? { user: UserDTO.parse(object.user) } : null),
+      ...(object.task ? { task: TaskDTO.parse(object.task) } : null),
+      start: new DateTimeModel(object.start),
+      end: object.end !== null ? new DateTimeModel(object.end) : null,
+      comment: object.comment,
+    });
+  }
   public id: number;
   public user?: UserDTO;
   public task?: TaskDTO;
@@ -30,18 +40,7 @@ export class ReportDTO extends DTO<IReportDTO> implements IReportDTO {
       ...(this.task ? { task: this.task.serialize() } : null),
       start: this.start.toString(),
       end: this.end !== null ? this.end.toString() : null,
-      comment: this.comment
-    }
-  }
-
-  public static parse(object: IReportJSON): ReportDTO {
-    return new ReportDTO({
-      id: object.id,
-      ...(object.user ? { user: UserDTO.parse(object.user) } : null),
-      ...(object.task ? { task: TaskDTO.parse(object.task) } : null),
-      start: new DateTimeModel(object.start),
-      end: object.end !== null ? new DateTimeModel(object.end) : null,
-      comment: object.comment,
-    });
+      comment: this.comment,
+    };
   }
 }

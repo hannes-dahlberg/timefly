@@ -200,7 +200,7 @@ export default class TimerComponent extends Vue {
   }
 
   public stop(report: ReportViewModel) {
-    this.timerStop();
+    //this.timerStop();
   }
 }
 </script>

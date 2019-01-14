@@ -5,12 +5,12 @@ import { UserModel } from "./models/user.model";
 import { IValidationInput, validate, ValidationError } from "./modules/validation";
 
 // Models
-import { AuthService, container } from "artoo";
+import { AuthService, container } from "artos";
 
 // Add User to express request interface
 declare global {
     namespace Express {
-        interface Request {
+        interface Request { // tslint:disable-line:interface-name
             user: UserModel;
         }
     }
@@ -18,12 +18,11 @@ declare global {
 
 export const middleware = (middlewares: RequestHandler | RequestHandler[]) => (target: any, propertyKey: string, descriptor: PropertyDescriptor): void => {
     const originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
+    descriptor.value = function(...args: any[]) {
         if (!(middlewares instanceof Array)) { middlewares = [middlewares]; }
         return [...middlewares, originalMethod.apply(this, ...args)];
     };
 };
-
 
 container.set<typeof UserModel>("model.user", UserModel);
 
@@ -62,12 +61,11 @@ export class Middlewares {
 
     public validation(validation: IValidationInput): RequestHandler {
         return (request: Request, response: Response, next: NextFunction): void => {
-            let data = request.method === "GET" ? request.query : request.body;
+            const data = request.method === "GET" ? request.query : request.body;
             validate(data, validation, request, response)
                 .then((result: boolean | ValidationError) => {
-                    if (typeof result === 'boolean') {
-                        if (result) { next(); }
-                        else { response.status(400).json({ message: "Validation failed" }); }
+                    if (typeof result === "boolean") {
+                        if (result) { next(); } else { response.status(400).json({ message: "Validation failed" }); }
                     } else {
                         response.status(400).json({ validationError: result });
                     }

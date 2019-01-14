@@ -16,7 +16,7 @@ const MODULES = {
   timer: timerStore,
 };
 
-export interface IAppState { }
+export interface IAppState { } // tslint:disable-line:no-empty-interface
 
 Vue.use(Vuex);
 

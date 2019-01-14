@@ -1,12 +1,12 @@
-import { container, HelperService } from "artoo";
+import { container, HelperService } from "artos";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
 const helperService: HelperService = container.getService(HelperService, { useName: "service.helpers" });
 
 export type formWorker = (value: string) => any;
 
-export const FormWorker = {
-  parseNumber: (decimals: number = 2, symbol: string | RegExp = "."): formWorker => (value: string): number | null => {
+export class FormWorker {
+  public static parseNumber = (decimals: number = 2, symbol: string | RegExp = "."): formWorker => (value: string): number | null => {
     if (!(symbol instanceof RegExp)) {
       symbol = new RegExp(`\\${symbol}`, "ig");
     }
@@ -19,25 +19,28 @@ export const FormWorker = {
     }
 
     return null;
-  },
-  parseInteger: (value: string): number | null => {
-    const returnValue: number = parseInt(value);
+  }
+
+  public static parseInteger = (value: string): number | null => {
+    const returnValue: number = parseInt(value, 10);
     return returnValue === returnValue ? returnValue : null;
-  },
-  parseDate: (value: string): Date | null => {
+  }
+
+  public static parseDate = (value: string): Date | null => {
     const returnValue = new Date(value);
     return returnValue.toString() !== "Invalid Date" ? returnValue : null;
-  },
-  parseModel: <T, C extends new (...args: any[]) => T>(model: C): formWorker => (value: string): T => {
+  }
+
+  public static parseModel = <T, C extends new (...args: any[]) => T>(model: C): formWorker => (value: string): T => {
     return new (model)(value);
-  },
-};
+  }
+}
 
 export interface IFormWorkerInput { [key: string]: IFormWorkerInput | formWorker | formWorker[]; }
 
 export const workForm = (formWorker: IFormWorkerInput) => (target: any, propertyKey: string, descriptor: PropertyDescriptor): void => {
   const originalMethod = descriptor.value;
-  descriptor.value = function (...args: any[]) {
+  descriptor.value = function(...args: any[]) {
     return [(request: Request, response: Response, next: NextFunction): void => {
       const workit = (formWorker: IFormWorkerInput, key: string = "") => {
         Object.keys(formWorker).forEach((name: string) => {

@@ -1,7 +1,7 @@
 // Libs
-import { AuthService, container } from "artoo";
+import { AuthService, container } from "artos";
 import { Request, RequestHandler, Response } from "express";
-import { Middlewares, middleware } from "../middlewares";
+import { middleware, Middlewares } from "../middlewares";
 import { Validation } from "../modules/validation";
 
 const middlewares: Middlewares = container.getService(Middlewares);
