@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:11.4.0
+      - image: circleci/node:11.6.0-alpine
     working_directory: ~/timefly
     steps:
       - checkout
@@ -37,7 +37,7 @@ jobs:
       - run:
           name: Deploy over SSH
           command: |
-            rsync -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/build/ ~/timefly/node_modules deploy@dwik.se:/var/www/applications/timefly/production
+            rsync -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/build ~/timefly/node_modules deploy@dwik.se:/var/www/applications/timefly/production
             rsync -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/storage/migrations/*.ts deploy@dwik.se:/var/www/applications/timefly/production/storage/migrations
 workflows:
   version: 2.1
