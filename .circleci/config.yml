@@ -22,6 +22,7 @@ jobs:
           root: ./
           paths:
             - build
+            - node_modules
   deploy:
     machine:
       enabled: true
@@ -35,7 +36,8 @@ jobs:
       - run:
           name: Deploy over SSH
           command: |
-            scp -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly deploy@dwik.se:/var/www/applications/timefly
+            scp -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/build/ ~/timefly/node_modules deploy@dwik.se:/var/www/applications/timefly/production
+            scp -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/storage/migrations/*.ts deploy@dwik.se:/var/www/applications/timefly/production/storage/migrations
 workflows:
   version: 2.1
   build-and-deploy:
