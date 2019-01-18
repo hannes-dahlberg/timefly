@@ -65,7 +65,8 @@ commands:
             rsync -i ~/.ssh/<< parameters.key_filename >> -r << working_directory >>/storage/migrations/*.ts << parameters.ssh_connection >>:<< parameters.deploy_directory >>/<< parameters.environment >>/storage/migrations
 jobs:
   build:
-    executor: build
+    executor:
+      name: build
       working_directory: ~/timefly
     steps:
       - build
@@ -75,7 +76,8 @@ jobs:
         type: enum
         enum: [production, staging, develop]
         default: develop
-    executor: deploy
+    executor:
+      name: deploy
       working_directrory: ~/timefly
     steps:
       - deploy:
