@@ -70,46 +70,62 @@ jobs:
       working_directory: ~/timefly
     steps:
       - build
-  deploy:
-    parameters:
-      environment:
-        type: enum
-        enum: [production, staging, develop]
-        default: develop
+  deploy-develop:
     executor:
       name: deploy
       working_directory: ~/timefly
     steps:
       - deploy:
           working_directory: ~/timefly
-          environment: << parameters.environment >>
+          environment: develop
           fingerprint: 49:07:e3:ef:41:45:f2:c6:96:47:88:9f:c0:56:03:5d
           key_filename: id_rsa_4907e3ef4145f2c69647889fc056035d
           ssh_connection: deploy@dwik.se
-          deploy_directory: /var/www/applications
+          deploy_directory: /var/www/applications/timefly
+  deploy-staging:
+    executor:
+      name: deploy
+      working_directory: ~/timefly
+    steps:
+      - deploy:
+          working_directory: ~/timefly
+          environment: staging
+          fingerprint: 49:07:e3:ef:41:45:f2:c6:96:47:88:9f:c0:56:03:5d
+          key_filename: id_rsa_4907e3ef4145f2c69647889fc056035d
+          ssh_connection: deploy@dwik.se
+          deploy_directory: /var/www/applications/timefly
+  deploy-production:
+    executor:
+      name: deploy
+      working_directory: ~/timefly
+    steps:
+      - deploy:
+          working_directory: ~/timefly
+          environment: production
+          fingerprint: 49:07:e3:ef:41:45:f2:c6:96:47:88:9f:c0:56:03:5d
+          key_filename: id_rsa_4907e3ef4145f2c69647889fc056035d
+          ssh_connection: deploy@dwik.se
+          deploy_directory: /var/www/applications/timefly
 workflows:
   version: 2.1
   build-and-deploy:
     jobs:
       - build
-      - deploy:
+      - deploy-develop:
           requires:
             - build
-          environment: develop
           filters:
             branches:
               only: develop
-      - deploy:
+      - deploy-staging:
           requires:
             - build
-          environment: staging
           filters:
             branches:
               only: /^releases\/.+$/
-      - deploy:
+      - deploy-production:
           requires:
             - build
-          environment: production
           filters:
             branches:
               only: master
