@@ -78,7 +78,7 @@ jobs:
         default: develop
     executor:
       name: deploy
-      working_directrory: ~/timefly
+      working_directory: ~/timefly
     steps:
       - deploy:
           working_directory: ~/timefly
