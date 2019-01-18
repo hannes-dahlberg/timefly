@@ -89,7 +89,7 @@ jobs:
           deploy_directory: /var/www/applications
 workflows:
   version: 2.1
-  build-and-deploy-to-develop:
+  build-and-deploy:
     jobs:
       - build
       - deploy:
@@ -99,9 +99,6 @@ workflows:
           filters:
             branches:
               only: develop
-  build-and-deploy-to-staging:
-    jobs:
-      - build
       - deploy:
           requires:
             - build
@@ -109,9 +106,6 @@ workflows:
           filters:
             branches:
               only: /^releases\/.+$/
-  build-and-deploy-to-production:
-    jobs:
-      - build
       - deploy:
           requires:
             - build
