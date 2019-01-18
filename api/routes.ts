@@ -1,11 +1,10 @@
 // Libs
-import { container, Validation } from "artos";
-import { Request, RequestHandler, Response, Router } from "express";
+import { container } from "artos";
+import { Request, Response, Router } from "express";
 
 // Controllers
-import { AuthController, ReportController, TimerController } from "./controllers";
+import { AuthController, ClientController, ReportController, TimerController } from "./controllers";
 
-import { ClientController } from "./controllers/client.controller";
 import { Middlewares } from "./middlewares";
 const middlewares: Middlewares = container.getService(Middlewares);
 const authController: AuthController = container.getService(AuthController);

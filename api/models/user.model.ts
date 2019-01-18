@@ -1,8 +1,7 @@
-import { IRelationType, ModelModule, RelationModule, UserModel as ArtosUserModel } from "artos";
+import { ModelModule, UserModel as ArtosUserModel } from "artos";
 
 import { GroupModel } from "./group.model";
 import { ReportModel } from "./report.model";
-import { TaskModel } from "./task.model";
 
 export class UserModel extends ArtosUserModel {
   public static table = "users";
