@@ -1,9 +1,21 @@
 version: 2.1
-jobs:
+executors:
   build:
+    parameters:
+      working_directory:
+        type: string
     docker:
-      - image: circleci/node:11.6.0
-    working_directory: ~/timefly
+      - image: circleci/node:11.4.0
+    working_directory: << parameters.working_directory >>
+  deploy:
+    parameters:
+      working_directory:
+        type: string
+    machine:
+      enabled: true
+    working_directory: << parameters.working_directory >>
+commands:
+  build:
     steps:
       - checkout
       - restore_cache:
@@ -25,28 +37,83 @@ jobs:
             - node_modules
             - storage/migrations
   deploy:
-    machine:
-      enabled: true
-    working_directory: ~/timefly
+    parameters:
+      environment:
+        type: enum
+        enum: [production, staging, develop]
+        default: develop
+      fingerprint:
+        type: string
+      key_filename:
+        type: string
+      ssh_connection:
+        type: string
+      deploy_directory:
+        type: string
+      working_directory:
+        type: string
     steps:
       - attach_workspace:
           at: .
       - add_ssh_keys:
           fingerprints:
-            - 49:07:e3:ef:41:45:f2:c6:96:47:88:9f:c0:56:03:5d
+            - << parameters.fingerprint >>
       - run:
           name: Deploy over SSH
           command: |
-            rsync -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/build ~/timefly/node_modules deploy@dwik.se:/var/www/applications/timefly/production
-            rsync -i ~/.ssh/id_rsa_4907e3ef4145f2c69647889fc056035d -r ~/timefly/storage/migrations/*.ts deploy@dwik.se:/var/www/applications/timefly/production/storage/migrations
+            rsync -i ~/.ssh/<< parameters.key_filename >> -r << working_directory >>/build << working_directory >>/node_modules << parameters.ssh_connection >>:<< parameters.deploy_directory >>/<< parameters.environment >>
+            rsync -i ~/.ssh/<< parameters.key_filename >> -r << working_directory >>/storage/migrations/*.ts << parameters.ssh_connection >>:<< parameters.deploy_directory >>/<< parameters.environment >>/storage/migrations
+jobs:
+  build:
+    executor: build
+      working_directory: ~/timefly
+    steps:
+      - build
+  deploy:
+    parameters:
+      environment:
+        type: enum
+        enum: [production, staging, develop]
+        default: develop
+    executor: deploy
+      working_directrory: ~/timefly
+    steps:
+      - deploy:
+          working_directory: ~/timefly
+          environment: << parameters.environment >>
+          fingerprint: 49:07:e3:ef:41:45:f2:c6:96:47:88:9f:c0:56:03:5d
+          key_filename: id_rsa_4907e3ef4145f2c69647889fc056035d
+          ssh_connection: deploy@dwik.se
+          deploy_directory: /var/www/applications
 workflows:
   version: 2.1
-  build-and-deploy:
+  build-and-deploy-to-develop:
     jobs:
       - build
       - deploy:
           requires:
             - build
+          environment: develop
+          filters:
+            branches:
+              only: develop
+  build-and-deploy-to-staging:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          environment: staging
+          filters:
+            branches:
+              only: /^releases\/.+$/
+  build-and-deploy-to-production:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          environment: production
           filters:
             branches:
               only: master
