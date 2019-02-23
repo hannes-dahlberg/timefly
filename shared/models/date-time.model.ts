@@ -28,14 +28,16 @@ export class DateTimeModel {
     return value;
   }
   private _moment: moment.Moment;
-  constructor(date: Date)
+  constructor(date?: Date)
   constructor(date: string, format?: string)
   constructor(year: number, month: number, day: number, hour?: number, minute?: number, second?: number)
-  constructor(year: Date | string | number, month?: number | string, day?: number, hour: number = 0, minute: number = 0, second: number = 0) {
+  constructor(year?: Date | string | number, month?: number | string, day?: number, hour: number = 0, minute: number = 0, second: number = 0) {
     if (year instanceof Date) {
       this._moment = moment(year);
     } else if (typeof year === "string") {
       this._moment = moment(year, typeof month === "string" ? month : undefined);
+    } else if (year === undefined) {
+      this._moment = moment();
     } else {
       this._moment = moment(`${year}${month}${day}${hour}${minute}${second}`, "YYYYMDHms");
     }

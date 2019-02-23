@@ -20,4 +20,12 @@ export class UserViewModel extends ViewModel<IserViewModel> implements IserViewM
   public id: number;
   public email: string;
   public reports?: ReportViewModel[];
+
+  public clone(): UserViewModel {
+    return new UserViewModel({
+      id: this.id,
+      email: this.email,
+      ...(this.reports ? { reports: this.reports.map((report: ReportViewModel) => report.clone()) } : null),
+    });
+  }
 }

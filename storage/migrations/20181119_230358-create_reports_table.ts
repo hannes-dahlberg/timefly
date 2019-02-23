@@ -40,7 +40,7 @@ export let up: () => Promise<void> = () => {
                 [id] INTEGER PRIMARY KEY,
                 [name] VARCHAR(255),
                 [created_at] DATETIME,
-                [update_at] DATETIME
+                [updated_at] DATETIME
             );
         `).then(() => resolve()).catch((error: Error) => reject(error));
     });
@@ -49,11 +49,11 @@ export let up: () => Promise<void> = () => {
 export let down: () => Promise<void> = () => {
     return new Promise<void>((resolve, reject) => {
         storageService.execute(`
-        DROP TABLE IF EXISTS [reports];
-        DROP TABLE IF EXISTS [projects];
-        DROP TABLE IF EXISTS [tasks];
-        DROP TABLE IF EXISTS [clients_to_groups];
-        DROP TABLE IF EXISTS [customers];
+            DROP TABLE IF EXISTS [reports];
+            DROP TABLE IF EXISTS [projects];
+            DROP TABLE IF EXISTS [tasks];
+            DROP TABLE IF EXISTS [clients_to_groups];
+            DROP TABLE IF EXISTS [clients];
         `).then(() => resolve()).catch((error: Error) => reject(error));
     });
 };

@@ -20,4 +20,12 @@ export class ClientViewModel extends ViewModel<IClientViewModel> implements ICli
   public id: number;
   public name: string;
   public projects?: ProjectViewModel[];
+
+  public clone(): ClientViewModel {
+    return new ClientViewModel({
+      id: this.id,
+      name: this.name,
+      ...(this.projects ? { projects: this.projects.map((project: ProjectViewModel) => project.clone()) } : null),
+    });
+  }
 }

@@ -1,13 +1,13 @@
-import { ConfigService, container, ParametersType, RelationModule } from "artos";
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import { container } from "artos";
+import { Request, RequestHandler, Response } from "express";
 import * as moment from "moment";
 import { DateTimeModel } from "../../shared/models/date-time.model";
 import { ReportModel } from "../models/report.model";
 import { UserModel } from "../models/user.model";
 
-import { ReportDTO, StartTimerDTO, TaskDTO, UserDTO } from "../../shared/dto";
+import { CreateReportDTO, EditReportDTO, ReportDTO } from "../../shared/dto";
 import { middleware, Middlewares } from "../middlewares";
-import { Validation, validation } from "../modules/validation";
+import { Validation } from "../modules/validation";
 
 const middlewares: Middlewares = container.getService(Middlewares, { useName: "service.middlewares" });
 
@@ -47,7 +47,81 @@ export class ReportController {
             end: report.end,
             comment: report.comment,
           }).serialize()));
-        }).catch((error: any) => { console.log(error); response.sendStatus(500); });
+        }).catch(() => response.sendStatus(500));
+    };
+  }
+
+  public create(): RequestHandler {
+    return (request: Request, response: Response): void => {
+      // Parse report data from request
+      const createReport: CreateReportDTO = CreateReportDTO.parse(request.body);
+
+      // Check if user is owner of provided task
+      UserModel
+        .with("groups.clients.projects.tasks")
+        .where("users.id", request.user.id.toString())
+        .where("tasks.id", createReport.taskId.toString())
+        .first().then((user: UserModel) => {
+          if (user === undefined) { response.sendStatus(400); return; }
+
+          const serializedReport = createReport.serialize();
+
+          // Create report
+          ReportModel.create({
+            user_id: request.user.id.toString(),
+            task_id: serializedReport.taskId.toString(),
+            start: serializedReport.start,
+            ...(serializedReport.end !== undefined ? { end: serializedReport.end } : null),
+            comment: serializedReport.comment,
+          }).then(() => response.sendStatus(200)).catch(() => response.sendStatus(500));
+        }).catch(() => response.sendStatus(500));
+    };
+  }
+
+  public update(): RequestHandler {
+    return (request: Request, response: Response): void => {
+      // Parse report data from request
+      const editReport: EditReportDTO = EditReportDTO.parse(request.body);
+
+      // Check ownership of report
+      ReportModel
+        .where("id", editReport.id.toString())
+        .where("user_id", request.user.id.toString())
+        .first().then((report: ReportModel) => {
+          if (report === undefined) { response.sendStatus(404); return; }
+          // Check if user is owner of provided task
+          UserModel
+            .with("groups.clients.projects.tasks")
+            .where("users.id", request.user.id.toString())
+            .where("tasks.id", editReport.taskId.toString())
+            .first().then((user: UserModel) => {
+              if (user === undefined) { response.sendStatus(400); return; }
+
+              const serializedReport = editReport.serialize();
+
+              // Update report data
+              report.task_id = serializedReport.taskId;
+              report.start = serializedReport.start;
+              if (serializedReport.end !== undefined) { report.end = serializedReport.end; }
+              report.comment = serializedReport.comment;
+
+              // Save report
+              report.save().then(() => response.sendStatus(200)).catch(() => response.sendStatus(500));
+            });
+        }).catch(() => response.sendStatus(500));
+    };
+  }
+
+  public remove() {
+    return (request: Request, response: Response): void => {
+      // Check ownership of report
+      ReportModel
+        .where("id", request.params.id.toString())
+        .where("user_id", request.user.id.toString())
+        .first().then((report: ReportModel) => {
+          if (report === undefined) { response.sendStatus(404); return; }
+          report.delete().then(() => response.sendStatus(200)).catch(() => response.sendStatus(500));
+        });
     };
   }
 }

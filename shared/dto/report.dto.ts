@@ -8,8 +8,8 @@ export interface IReport<A, B, C, D> {
   user?: A;
   task?: B;
   start: C;
-  end: D | null;
-  comment: string | null;
+  end?: D;
+  comment: string;
 }
 export interface IReportDTO extends IReport<IUserDTO, ITaskDTO, DateTimeModel, DateTimeModel> { }
 export interface IReportJSON extends IReport<IUserJSON, ITaskJSON, string, string> { }
@@ -22,7 +22,7 @@ export class ReportDTO extends DTO<IReportDTO> implements IReportDTO {
       ...(object.user ? { user: UserDTO.parse(object.user) } : null),
       ...(object.task ? { task: TaskDTO.parse(object.task) } : null),
       start: new DateTimeModel(object.start),
-      end: object.end !== null ? new DateTimeModel(object.end) : null,
+      ...(object.end ? { end: new DateTimeModel(object.end) } : null),
       comment: object.comment,
     });
   }
@@ -39,7 +39,7 @@ export class ReportDTO extends DTO<IReportDTO> implements IReportDTO {
       ...(this.user ? { user: this.user.serialize() } : null),
       ...(this.task ? { task: this.task.serialize() } : null),
       start: this.start.toString(),
-      end: this.end !== null ? this.end.toString() : null,
+      ...(this.end !== undefined ? { end: this.end.toString() } : null),
       comment: this.comment,
     };
   }

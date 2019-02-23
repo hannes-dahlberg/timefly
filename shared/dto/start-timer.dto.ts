@@ -10,7 +10,6 @@ export interface IStartTimerDTO extends IStartTimer<DateTimeModel> { }
 export interface IStartTimerJSON extends IStartTimer<string> { }
 
 export class StartTimerDTO extends DTO<IStartTimerDTO> implements IStartTimerDTO {
-
   public static parse(object: IStartTimerJSON): StartTimerDTO {
     return new StartTimerDTO({
       taskId: object.taskId,

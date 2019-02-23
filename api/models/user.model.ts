@@ -1,5 +1,4 @@
-import { ModelModule, UserModel as ArtosUserModel } from "artos";
-
+import { UserModel as ArtosUserModel } from "artos";
 import { GroupModel } from "./group.model";
 import { ReportModel } from "./report.model";
 
@@ -8,12 +7,9 @@ export class UserModel extends ArtosUserModel {
   public static fields = ["id", "email", "password"];
   public static fillable = ["email", "password"];
 
-  public static find<T extends ModelModule>(id: number): Promise<T> {
-    return this.where<T>("id", id.toString()).first();
-  }
-
   public email: string;
   public _reports: ReportModel[] = [];
+
   public _groups: GroupModel[] = [];
   public reports() { return this.hasMany(ReportModel, "user_id"); }
 

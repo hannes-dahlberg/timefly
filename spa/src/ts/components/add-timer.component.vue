@@ -95,11 +95,10 @@
 import { Vue, Component, Watch, Prop } from "vue-property-decorator";
 import { State, Action, Getter } from "vuex-class";
 import moment from "moment";
-import "moment/locale/sv";
 
 import ModalComponent from "./modal.component.vue";
 import ButtonComponent from "./button.component.vue";
-//import { ModalComponent, ButtonComponent } from "./";
+
 import {
   ClientViewModel,
   ProjectViewModel,
@@ -115,7 +114,6 @@ import {
 import { clientIndexAction } from "../store/client.store";
 import { timerStartAction } from "../store/timer.store";
 import { reportCreateAction } from "../store/report.store";
-import { ProjectModel } from "../../../../api/models";
 import { DateTimeModel } from "../../../../shared/models";
 
 @Component({
@@ -135,7 +133,11 @@ export default class AddTimerComponent extends Vue {
     oldValue: ProjectViewModel
   ): void {
     if (value !== null && oldValue !== null && value.id !== oldValue.id) {
-      this.selectedTask = null;
+      if (value.tasks && value.tasks.length !== 0) {
+        this.selectedTask = value.tasks[0];
+      } else {
+        this.selectedTask = null;
+      }
     }
   }
 
@@ -171,6 +173,10 @@ export default class AddTimerComponent extends Vue {
     return [];
   }
 
+  public get modal(): Vue {
+    return this.$refs.modal as Vue;
+  }
+
   public selectedProject: ProjectViewModel | null = null;
   public selectedTask: TaskViewModel | null = null;
   public from: string = "";
@@ -194,7 +200,7 @@ export default class AddTimerComponent extends Vue {
           if (projects !== undefined) {
             this.selectedProject = projects[0];
             const tasks = projects[0].tasks;
-            if(tasks !== undefined) {
+            if (tasks !== undefined) {
               this.selectedTask = tasks[0];
             }
           }
@@ -203,7 +209,7 @@ export default class AddTimerComponent extends Vue {
       (this.$refs.modal as Vue).$emit("show");
     });
     this.$on("hide", () => {
-      (this.$refs.modal as Vue).$emit("hide");
+      this.modal.$emit("hide");
     });
   }
 
@@ -226,8 +232,8 @@ export default class AddTimerComponent extends Vue {
       this.reportAdd(
         CreateReportDTO.parse({
           taskId: (this.selectedTask as TaskViewModel).id,
-          start: this.from,
-          end: this.to,
+          start: `${this.date.toDateString()} ${this.from}`,
+          end: `${this.date.toDateString()} ${this.to}`,
           comment: this.comment
         })
       )
@@ -239,8 +245,12 @@ export default class AddTimerComponent extends Vue {
           taskId: (this.selectedTask as TaskViewModel).id,
           start:
             this.from !== ""
-              ? this.from
-              : this.date.toMoment().format("YYYY-MM-DD HH:mm:00"),
+              ? `${this.date.toDateString()} ${this.from}`
+              : new DateTimeModel(
+                  `${this.date.toDateString()} ${new DateTimeModel()
+                    .toMoment()
+                    .format("HH:mm:00")}`
+                ).toString(),
           comment: this.comment
         })
       )
@@ -251,7 +261,8 @@ export default class AddTimerComponent extends Vue {
 
   public close() {
     this.loading = false;
-    (this.$refs.modal as Vue).$emit("hide");
+    this.modal.$emit("hide");
+    this.$emit("close");
   }
 
   public resetForm() {

@@ -43,6 +43,10 @@
   animation-iteration-count: infinite;
 }
 
+form {
+  margin: 0px;
+}
+
 @keyframes pulseColor {
   0% {
     background-color: rgba(184,218,255,0);
@@ -59,4 +63,28 @@
   100% {
     background-color: rgba(184,218,255,0);
   }
+}
+
+@keyframes flashingtext {
+  0% {color:rgba(0,0,0,1);}
+  20% {color: rgba(0,0,0,0);}
+  40% {color: rgba(0,0,0,1);}
+}
+
+@keyframes flashingbg {
+  0% {}
+  20% {background-color: transparent }
+  40% {}
+}
+
+
+.flashing {
+  &--text{
+    animation-name: flashingtext;
+  }
+  &--bg {
+    animation-name: flashingbg;
+  }
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
 }

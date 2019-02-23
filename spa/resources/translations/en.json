@@ -1,0 +1,32 @@
+{
+  "title": "Hello World",
+  "menu": {
+    "start": "Start",
+    "login": "Logga in",
+    "logout": "Logga ut",
+    "timer": "Timer",
+    "reports": "Reports",
+    "clients": "Clients"
+  },
+  "timer": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "button": {
+      "start": "Start",
+      "stop": "Stop",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "remove": {
+      "title": "Remove timer",
+      "message": "Are you sure you want remove the timer?"
+    }
+  },
+  "confirm": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

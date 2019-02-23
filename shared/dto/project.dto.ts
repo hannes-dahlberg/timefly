@@ -5,7 +5,7 @@ import { ITaskDTO, ITaskJSON, TaskDTO } from "./task.dto";
 export interface IProject<A, B> {
   id: number;
   name: string;
-  comment: string | null;
+  comment: string;
   client?: A;
   tasks?: B[];
 }
@@ -20,7 +20,7 @@ export class ProjectDTO extends DTO<IProjectDTO> implements IProjectDTO {
       name: object.name,
       comment: object.comment,
       ...(object.client ? { client: ClientDTO.parse(object.client) } : null),
-      ...(object.tasks ? { projects: object.tasks.map((task: ITaskJSON) => TaskDTO.parse(task)) } : null),
+      ...(object.tasks ? { tasks: object.tasks.map((task: ITaskJSON) => TaskDTO.parse(task)) } : null),
     });
   }
   public id: number;

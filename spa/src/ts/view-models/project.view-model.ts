@@ -27,4 +27,14 @@ export class ProjectViewModel extends ViewModel<IProjectViewModel> implements IP
   public comment: string;
   public client?: ClientViewModel;
   public tasks?: TaskViewModel[];
+
+  public clone(): ProjectViewModel {
+    return new ProjectViewModel({
+      id: this.id,
+      name: this.name,
+      comment: this.comment,
+      ...(this.client ? { client: this.client.clone() } : null),
+      ...(this.tasks ? { tasks: this.tasks.map((task: TaskViewModel) => task.clone()) } : null),
+    });
+  }
 }

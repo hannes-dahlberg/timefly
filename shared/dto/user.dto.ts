@@ -6,8 +6,8 @@ export interface IUSer<A> {
   email: string;
   reports?: A[];
 }
-export interface IUserDTO extends IUSer<IReportDTO> { }
-export interface IUserJSON extends IUSer<IReportJSON> { }
+export interface IUserDTO extends IUSer<IReportDTO> { } // tslint:disable-line:no-empty-interface
+export interface IUserJSON extends IUSer<IReportJSON> { } // tslint:disable-line:no-empty-interface
 
 export class UserDTO extends DTO<IUserDTO> implements IUserDTO {
 

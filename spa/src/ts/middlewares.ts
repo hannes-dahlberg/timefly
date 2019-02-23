@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter, { NavigationGuard, RawLocation, Route } from "vue-router";
 import { appStore } from "./store";
-
 export type navigationGuardNext = (to?: RawLocation | false | ((vm: Vue) => any) | void) => void;
 
 export default {
@@ -17,6 +16,12 @@ export default {
   guest: ((to, from, next) => {
     // Users authenticated will be redirected to 404
     next(appStore.getters["auth/isAuth"] ? { path: "/error/404" } : undefined);
+  }) as NavigationGuard,
+  logout: ((to, from, next) => {
+    // Logout
+    appStore.dispatch("auth/logout");
+    // Navigate to start page
+    next({ name: "start" });
   }) as NavigationGuard,
   // Redirect to 404 page if route is not defined
   invalidRoute: <NavigationGuard>(to, from, next) => {

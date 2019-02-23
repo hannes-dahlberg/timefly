@@ -4,7 +4,7 @@ import { ActionTree, Module } from "vuex";
 
 import { IAppState } from "./app.store";
 
-import { CreateReportDTO, ICreateReportJSON, IReportJSON, ReportDTO } from "../../../../shared/dto";
+import { CreateReportDTO, EditReportDTO, IReportJSON, ReportDTO } from "../../../../shared/dto";
 
 export interface IReportState {
   foo: string;
@@ -12,22 +12,32 @@ export interface IReportState {
 
 export type reportIndexAction = (date: Date) => Promise<ReportDTO[]>;
 export type reportCreateAction = (createReport: CreateReportDTO) => Promise<void>;
-
-export const apiPath: string = `http://${process.env.API_HOST}:${process.env.PORT}/report`;
+export type reportEditAction = (editReport: EditReportDTO) => Promise<void>;
+export type reportRemoveAction = (id: number) => Promise<void>;
 
 export const reportStore: Module<IReportState, IAppState> = {
   namespaced: true,
   actions: {
-    index: ({ }, date: Date): Promise<ReportDTO[]> => {
+    index: ({ dispatch }, date: Date): Promise<ReportDTO[]> => {
       return new Promise((resolve, reject) => {
-        Axios.get(apiPath, { params: { date: moment(date).format("YYYY-MM-DD") } }).then((response: AxiosResponse<IReportJSON[]>) => {
+        Axios.get("/report", { params: { date: moment(date).format("YYYY-MM-DD") } }).then((response: AxiosResponse<IReportJSON[]>) => {
           resolve(response.data.map((client: IReportJSON) => ReportDTO.parse(client)));
-        }).catch((error: any) => reject(error));
+        }).catch((error: any) => { dispatch("error/submit", { code: 500, message: "Error while getting reports", error }); reject(error); });
       });
     },
-    add: ({ }, payload: ICreateReportJSON): Promise<void> => {
+    add: ({ dispatch }, payload: CreateReportDTO): Promise<void> => {
       return new Promise((resolve, reject) => {
-        Axios.post(apiPath, payload).then(() => resolve()).catch((error: any) => reject(error));
+        Axios.post("/report", payload.serialize()).then(() => resolve()).catch((error: any) => { dispatch("error/submit", { code: 500, message: "Error while adding report", error }); reject(error); });
+      });
+    },
+    update: ({ dispatch }, payload: EditReportDTO): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        Axios.put(`/report/${payload.id}`, payload.serialize()).then(() => resolve()).catch((error: any) => { dispatch("error/submit", { code: 500, message: "Error while updating report", error }); reject(error); });
+      });
+    },
+    remove: ({ dispatch }, id: number): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        Axios.delete(`/report/${id}`).then(() => resolve()).catch((error: any) => { dispatch("error/submit", { code: 500, message: "Error while deleting report", error }); reject(error); });
       });
     },
   } as ActionTree<IReportState, IAppState>,

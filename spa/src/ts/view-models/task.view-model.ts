@@ -17,11 +17,20 @@ export class TaskViewModel extends ViewModel<ITaskViewModel> implements ITaskVie
       id: task.id,
       name: task.name,
       ...(task.project ? { project: ProjectViewModel.fromProjectDTO(task.project) } : null),
-      ...(task.reports ? { reports: task.reports.map((project: ReportDTO) => ReportViewModel.fromReportDTO(project)) } : null),
+      ...(task.reports ? { reports: task.reports.map((report: ReportDTO) => ReportViewModel.fromReportDTO(report)) } : null),
     });
   }
   public id: number;
   public name: string;
   public project?: ProjectViewModel;
   public reports?: ReportViewModel[];
+
+  public clone(): TaskViewModel {
+    return new TaskViewModel({
+      id: this.id,
+      name: this.name,
+      ...(this.project ? { project: this.project.clone() } : null),
+      ...(this.reports ? { reports: this.reports.map((report: ReportViewModel) => report.clone()) } : null),
+    });
+  }
 }

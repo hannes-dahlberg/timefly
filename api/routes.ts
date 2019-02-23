@@ -5,7 +5,9 @@ import { Request, Response, Router } from "express";
 // Controllers
 import { AuthController, ClientController, ReportController, TimerController } from "./controllers";
 
+// Middlewares
 import { Middlewares } from "./middlewares";
+
 const middlewares: Middlewares = container.getService(Middlewares);
 const authController: AuthController = container.getService(AuthController);
 const timerController: TimerController = container.getService(TimerController);
@@ -14,26 +16,13 @@ const clientController: ClientController = container.getService(ClientController
 
 const router: Router = Router();
 
-/*const group = (router: Router, path: string, middlewares: RequestHandler, callback: (router: Router) => void) => {
-  router.use(path, middlewares);
-  callback(router);
-};*/
-
 router.post("/auth/login", middlewares.guest(), authController.login());
-
 router.get("/report", middlewares.auth(), reportController.index());
+router.post("/report", middlewares.auth(), reportController.create());
+router.put("/report/:id", middlewares.auth(), reportController.update());
+router.delete("/report/:id", middlewares.auth(), reportController.remove());
 router.post("/timer/start", middlewares.auth(), timerController.start());
-router.put("/timer/stop", middlewares.auth(), timerController.stop());
+router.put("/timer/:id/stop", middlewares.auth(), timerController.stop());
 router.get("/client", middlewares.auth(), clientController.index());
-
-router.get("/test", (request: Request, response: Response) => {
-  response.json({ foo: "Hello world" });
-});
-
-/*group(router, "timer", middlewares.auth(), (router: Router) => {
-  router.get("", timerController.index());
-  router.post("start", timerController.start());
-  router.post("stop", timerController.stop());
-});*/
 
 export { router };

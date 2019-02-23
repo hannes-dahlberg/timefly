@@ -5,7 +5,7 @@ export interface ICreateReport<A, B> {
   taskId: number;
   start: A;
   end: B;
-  comment: string | null;
+  comment: string;
 }
 export interface ICreateReportDTO extends ICreateReport<DateTimeModel, DateTimeModel> { }
 export interface ICreateReportJSON extends ICreateReport<string, string> { }
